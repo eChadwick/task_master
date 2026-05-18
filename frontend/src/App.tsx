@@ -18,7 +18,7 @@ function App() {
       setMessage(`Success! Database ID: ${response.data.id}`);
       setTaskName(''); 
     } catch (error) {
-      setMessage('Error saving task to the graph.');
+      setMessage(`Error: ${error.response.data.detail}`);
       console.error(error);
     }
   };
