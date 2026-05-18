@@ -1,31 +1,38 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from models import Task
+from neomodel.exceptions import UniqueProperty
 
-app = FastAPI()
+# redirect_slashes=False stops FastAPI from fighting with the browser over trailing slashes
+app = FastAPI(redirect_slashes=False)
 
-# Tell FastAPI to let our local React frontend talk to it safely
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# This defines the exact JSON structure we expect from the frontend
 class TaskCreateRequest(BaseModel):
     name: str
 
-# Our single vertical slice endpoint
+# Explicitly handle the browser's automatic preflight checks
+@app.options("/api/tasks")
+def options_tasks():
+    return Response(status_code=200)
+
 @app.post("/api/tasks")
 def create_task(payload: TaskCreateRequest):
-    # This reaches out to Neo4j, saves the node, and returns it
-    new_task = Task(name=payload.name).save()
-    
-    return {
-        "id": new_task.element_id, 
-        "name": new_task.name, 
-        "status": "Saved to DB!"
-    }
+    try:
+        new_task = Task(name=payload.name).save()
+        return {
+            "id": new_task.element_id, 
+            "name": new_task.name, 
+            "status": "Saved to DB!"
+        }
+    except UniqueProperty:
+        raise HTTPException(status_code=400, detail="A task with this name already exists.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
