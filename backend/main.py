@@ -23,7 +23,7 @@ class TaskCreateRequest(BaseModel):
 def options_tasks():
     return Response(status_code=200)
 
-@app.post("/api/tasks")
+@app.post("/api/tasks", status_code=201)
 def create_task(payload: TaskCreateRequest):
     try:
         new_task = Task(name=payload.name).save()
