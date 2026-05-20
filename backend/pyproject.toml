@@ -9,3 +9,9 @@ dependencies = [
     "neomodel>=6.1.0",
     "uvicorn>=0.47.0",
 ]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.0.3",
+]
