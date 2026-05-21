@@ -1,8 +1,6 @@
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from models import Task
-from neomodel.exceptions import UniqueProperty
 from routes import router
 
 # redirect_slashes=False stops FastAPI from fighting with the browser over trailing slashes
