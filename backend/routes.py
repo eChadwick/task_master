@@ -3,7 +3,8 @@ from neomodel.exceptions import UniqueProperty
 from models import Task
 from pydantic import BaseModel
 
-# Create the router and encapsulate the "/api" prefix right here
+from error_messages import TaskErrors
+
 router = APIRouter(prefix="/api")
 
 class TaskCreateRequest(BaseModel):
@@ -18,7 +19,7 @@ def create_task(payload: TaskCreateRequest):
     try:
         new_task = Task(name=payload.name).save()
     except UniqueProperty:
-        raise HTTPException(status_code=400, detail="A task with this name already exists.")
+        raise HTTPException(status_code=400, detail=TaskErrors.DUPLICATE_NAME)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
         
