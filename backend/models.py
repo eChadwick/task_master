@@ -1,4 +1,4 @@
-from neomodel import config, StructuredNode, StringProperty, get_config 
+from neomodel import config, StructuredNode, StringProperty, get_config, DateProperty
 
 config = get_config()
 config.database_url = "bolt://neo4j:password123@localhost:7687"
@@ -6,3 +6,4 @@ config.database_url = "bolt://neo4j:password123@localhost:7687"
 class Task(StructuredNode):
     name = StringProperty(unique_index=True, required=True)
     details = StringProperty(required=False)
+    deadline = DateProperty(required=False)
