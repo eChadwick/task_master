@@ -3,6 +3,7 @@ import axios from 'axios';
 
 function App() {
   const [taskName, setTaskName] = useState('');
+  const [taskDetails, setTaskDetails] = useState('')
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -12,11 +13,13 @@ function App() {
     try {
       // Sends the text straight to our running FastAPI backend
       const response = await axios.post('http://localhost:8000/api/tasks', {
-        name: taskName
+        name: taskName,
+        details: taskDetails
       });
       
       setMessage(`Success! Database ID: ${response.data.id}`);
       setTaskName(''); 
+      setTaskDetails('')
     } catch (error) {
       setMessage(`Error: ${error.response.data.detail}`);
       console.error(error);
@@ -35,6 +38,15 @@ function App() {
           placeholder="Enter task name..."
           style={{ padding: '8px', width: '250px', marginRight: '10px' }}
         />
+        <br />
+        <input 
+          type="text" 
+          value={taskDetails} 
+          onChange={(e) => setTaskDetails(e.target.value)} 
+          placeholder="Enter task details (optional)..."
+          style={{ padding: '8px', width: '250px', marginRight: '10px' }}
+        />
+        <br />
         <button type="submit" style={{ padding: '8px 16px' }}>Save to Graph</button>
       </form>
 

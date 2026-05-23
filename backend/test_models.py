@@ -16,12 +16,14 @@ def clear_database():
 
 
 def test_create_task_success():
-    payload = {"name": "test task"}
+    payload = {"name": "test task",
+               "details": "task details"}
     
     response = client.post("api/tasks", json=payload)
     
     assert response.status_code == 201
     assert response.json()["name"] == payload["name"]
+    assert response.json()["details"] == payload["details"  ]
     assert "id" in response.json()
 
 

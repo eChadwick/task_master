@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Response
 from neomodel.exceptions import UniqueProperty
 from models import Task
 from pydantic import BaseModel
+from typing import Optional
 
 from error_messages import TaskErrors
 
@@ -9,6 +10,7 @@ router = APIRouter(prefix="/api")
 
 class TaskCreateRequest(BaseModel):
     name: str
+    details: Optional[str] = None
 
 @router.options("/api/tasks")
 def options_tasks():
@@ -17,7 +19,7 @@ def options_tasks():
 @router.post("/tasks", status_code=201)
 def create_task(payload: TaskCreateRequest):
     try:
-        new_task = Task(name=payload.name).save()
+        new_task = Task(name=payload.name, details=payload.details).save()
     except UniqueProperty:
         raise HTTPException(status_code=400, detail=TaskErrors.DUPLICATE_NAME)
     except Exception as e:
@@ -26,5 +28,6 @@ def create_task(payload: TaskCreateRequest):
     return {
         "id": new_task.element_id,
         "name": new_task.name,
+        "details": new_task.details,
         "status": "Saved to DB!"
     }
