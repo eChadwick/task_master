@@ -4,6 +4,7 @@ import axios from 'axios';
 function App() {
   const [taskName, setTaskName] = useState('');
   const [taskDetails, setTaskDetails] = useState('')
+  const [taskDeadline, setTaskDeadline] = useState('')
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -14,12 +15,14 @@ function App() {
       // Sends the text straight to our running FastAPI backend
       const response = await axios.post('http://localhost:8000/api/tasks', {
         name: taskName,
-        details: taskDetails
+        details: taskDetails,
+        deadline: taskDeadline
       });
-      
+
       setMessage(`Success! Database ID: ${response.data.id}`);
-      setTaskName(''); 
-      setTaskDetails('')
+      setTaskName('');
+      setTaskDetails('');
+      setTaskDeadline('');
     } catch (error) {
       setMessage(`Error: ${error.response.data.detail}`);
       console.error(error);
@@ -29,21 +32,28 @@ function App() {
   return (
     <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
       <h2>Graph Database Task Slice</h2>
-      
+
       <form onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          value={taskName} 
-          onChange={(e) => setTaskName(e.target.value)} 
+        <input
+          type="text"
+          value={taskName}
+          onChange={(e) => setTaskName(e.target.value)}
           placeholder="Enter task name..."
           style={{ padding: '8px', width: '250px', marginRight: '10px' }}
         />
         <br />
-        <input 
-          type="text" 
-          value={taskDetails} 
-          onChange={(e) => setTaskDetails(e.target.value)} 
+        <input
+          type="text"
+          value={taskDetails}
+          onChange={(e) => setTaskDetails(e.target.value)}
           placeholder="Enter task details (optional)..."
+          style={{ padding: '8px', width: '250px', marginRight: '10px' }}
+        />
+        <br />
+        <input
+          type="date" 
+          value={taskDeadline}
+          onChange={(e) => setTaskDeadline(e.target.value)}
           style={{ padding: '8px', width: '250px', marginRight: '10px' }}
         />
         <br />
