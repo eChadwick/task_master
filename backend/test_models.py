@@ -19,7 +19,7 @@ def clear_database():
 def test_create_task_success():
     payload = {"name": "test task", "details": "task details", "deadline": "2026-05-21"}
 
-    response = client.post("api/tasks", json=payload)
+    response = client.post(app.url_path_for("create_task"), json=payload)
 
     assert response.status_code == 201
     assert response.json()["name"] == payload["name"]
@@ -31,10 +31,10 @@ def test_create_task_success():
 def test_create_duplicate_task_is_400():
     payload = {"name": "Duplicate Task Target"}
 
-    first_response = client.post("api/tasks", json=payload)
+    first_response = client.post(app.url_path_for('create_task'), json=payload)
     assert first_response.status_code == 201
 
-    second_response = client.post("api/tasks", json=payload)
+    second_response = client.post(app.url_path_for('create_task'), json=payload)
 
     assert second_response.status_code == 400
     assert second_response.json()["detail"] == TaskErrors.DUPLICATE_NAME
