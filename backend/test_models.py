@@ -49,4 +49,5 @@ def test_task_create_with_parent():
     child_response = client.post(app.url_path_for('create_task'), json=payload)
     
     assert child_response.status_code == 201
-    # assert parent1.element_id in child_response.json()
+    assert parent1.element_id in child_response.json()['parent_ids']
+    assert parent2.element_id in child_response.json()['parent_ids']
