@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.136.1",
+    "ipdb>=0.13.13",
     "neomodel>=6.1.0",
     "uvicorn>=0.47.0",
 ]

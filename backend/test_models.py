@@ -38,3 +38,15 @@ def test_create_duplicate_task_is_400():
 
     assert second_response.status_code == 400
     assert second_response.json()["detail"] == TaskErrors.DUPLICATE_NAME
+
+def test_task_create_with_parent():
+    parent1 = Task(name='parent1').save()
+    parent2 = Task(name='parent2').save()
+    payload = {
+        'name': 'child',
+        'parent_ids': [parent1.element_id, parent2.element_id]
+    }
+    child_response = client.post(app.url_path_for('create_task'), json=payload)
+    
+    assert child_response.status_code == 201
+    # assert parent1.element_id in child_response.json()
