@@ -44,10 +44,14 @@ def test_task_create_with_parent():
     parent2 = Task(name='parent2').save()
     payload = {
         'name': 'child',
-        'parent_ids': [parent1.element_id, parent2.element_id]
+        'parent_names': [parent1.name, parent2.name]
     }
     child_response = client.post(app.url_path_for('create_task'), json=payload)
     
     assert child_response.status_code == 201
-    assert parent1.element_id in child_response.json()['parent_ids']
-    assert parent2.element_id in child_response.json()['parent_ids']
+    assert parent1.name in child_response.json()['parent_names']
+    assert parent2.name in child_response.json()['parent_names']
+
+    child_node = Task.nodes.get(name=child_response.json()['name'])
+    assert parent1 in child_node.parent_names.all()
+    assert parent2 in child_node.parent_names.all()

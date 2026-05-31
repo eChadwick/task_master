@@ -15,4 +15,4 @@ class Task(StructuredNode):
     name = StringProperty(unique_index=True, required=True)
     details = StringProperty(required=False)
     deadline = DateProperty(required=False)
-    parent_ids = RelationshipTo('Task', 'IS_PART_OF')
+    parent_names = RelationshipTo('Task', 'IS_PART_OF')
