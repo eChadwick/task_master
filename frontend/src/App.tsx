@@ -91,6 +91,7 @@ function App() {
           style={{ padding: '8px', width: '250px', marginRight: '10px' }}
         />
         <br />
+        <h3>Task is part of:</h3>
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px' }}>
           
           {/* Left Side: Unselected Tasks */}
