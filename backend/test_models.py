@@ -55,3 +55,21 @@ def test_task_create_with_parent():
     child_node = Task.nodes.get(name=child_response.json()['name'])
     assert parent1 in child_node.parents.all()
     assert parent2 in child_node.parents.all()
+
+def test_task_create_with_children():
+    child1 = Task(name='child1').save()
+    child2 = Task(name='child2').save()
+    payload = {
+        'name': 'parent_task',
+        'children': [child1.name, child2.name]
+    }
+    
+    parent_response = client.post(app.url_path_for('create_task'), json=payload)
+    
+    assert parent_response.status_code == 201
+    assert child1.name in parent_response.json()['children']
+    assert child2.name in parent_response.json()['children']
+
+    parent_node = Task.nodes.get(name=parent_response.json()['name'])
+    assert child1 in parent_node.children.all()
+    assert child2 in parent_node.children.all()

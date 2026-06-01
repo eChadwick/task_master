@@ -14,6 +14,7 @@ class TaskCreateRequest(BaseModel):
     details: Optional[str] = None
     deadline: Optional[date] = None
     parents: List[str] = []
+    children: List[str] = []
 
 @router.options("/api/tasks")
 def options_tasks():
@@ -27,6 +28,10 @@ def create_task(payload: TaskCreateRequest):
             parent_node = Task.nodes.get_or_none(name=parent_name)
             if parent_node:
                 new_task.parents.connect(parent_node)
+        for child_name in payload.children:
+            child_node = Task.nodes.get_or_none(name=child_name)
+            if child_node:
+                new_task.children.connect(child_node)
     except UniqueProperty:
         raise HTTPException(status_code=400, detail=TaskErrors.DUPLICATE_NAME)
     except Exception as e:
@@ -38,6 +43,7 @@ def create_task(payload: TaskCreateRequest):
         "details": new_task.details,
         "deadline": new_task.deadline,
         "parents": [parent.name for parent in new_task.parents.all()],
+        "children": [child.name for child in new_task.children.all()],
         "status": "Saved to DB!"
     }
 
