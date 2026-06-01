@@ -40,3 +40,14 @@ def create_task(payload: TaskCreateRequest):
         "parents": [parent.name for parent in new_task.parents.all()],
         "status": "Saved to DB!"
     }
+
+@router.get("/tasks")
+def get_tasks():
+    return [
+        {
+            "name": task.name,
+            "details": task.details,
+            "deadline": task.deadline
+        }
+        for task in Task.nodes.all()
+    ]
