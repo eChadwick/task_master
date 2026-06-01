@@ -1,15 +1,22 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import './App.css'; // Make sure this path matches your file structure
+
+interface Task {
+  name: string;
+  details?: string | null;
+  deadline?: string | null;
+}
 
 function App() {
   const [taskName, setTaskName] = useState('');
-  const [taskDetails, setTaskDetails] = useState('')
-  const [taskDeadline, setTaskDeadline] = useState('')
+  const [taskDetails, setTaskDetails] = useState('');
+  const [taskDeadline, setTaskDeadline] = useState('');
   const [message, setMessage] = useState('');
   const [dbTasks, setDbTasks] = useState<Task[]>([]);
-  const [selectedParents, setSelectedParents] = useState<string[]>([]); // Right side list
-  const [highlightedAvailable, setHighlightedAvailable] = useState<string>(''); // Currently clicked on left
-  const [highlightedSelected, setHighlightedSelected] = useState<string>(''); // Currently clicked on right
+  const [selectedParents, setSelectedParents] = useState<string[]>([]); 
+  const [highlightedAvailable, setHighlightedAvailable] = useState<string>(''); 
+  const [highlightedSelected, setHighlightedSelected] = useState<string>(''); 
 
   useEffect(() => {
     async function fetchTasks() {
@@ -25,18 +32,16 @@ function App() {
 
   const unselectedTasks = dbTasks.filter(task => !selectedParents.includes(task.name));
 
-  // Move item from left side to right side
   const handleSelectParent = () => {
     if (!highlightedAvailable) return;
     setSelectedParents(prev => [...prev, highlightedAvailable]);
-    setHighlightedAvailable(''); // Clear selection highlight
+    setHighlightedAvailable(''); 
   };
 
-  // Move item from right side back to left side
   const handleDeselectParent = () => {
     if (!highlightedSelected) return;
     setSelectedParents(prev => prev.filter(name => name !== highlightedSelected));
-    setHighlightedSelected(''); // Clear selection highlight
+    setHighlightedSelected(''); 
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,7 +49,6 @@ function App() {
     if (!taskName.trim()) return;
 
     try {
-      // Sends the text straight to our running FastAPI backend
       const response = await axios.post('http://localhost:8000/api/tasks', {
         name: taskName,
         details: taskDetails || null,
@@ -58,48 +62,47 @@ function App() {
       setTaskDeadline('');
       setSelectedParents([]);
     } catch (error) {
-      setMessage(`Error: ${error.response.data.detail}`);
+      setMessage(`Error: ${error.response?.data?.detail || 'Something went wrong'}`);
       console.error(error);
     }
   };
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div className="app-container">
       <h2>Graph Database Task Slice</h2>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+      <form onSubmit={handleSubmit} className="task-form">
         <input
           type="text"
           value={taskName}
           onChange={(e) => setTaskName(e.target.value)}
           placeholder="Enter task name..."
-          style={{ padding: '8px', width: '250px', marginRight: '10px' }}
+          className="task-input"
         />
-        <br />
         <input
           type="text"
           value={taskDetails}
           onChange={(e) => setTaskDetails(e.target.value)}
           placeholder="Enter task details (optional)..."
-          style={{ padding: '8px', width: '250px', marginRight: '10px' }}
+          className="task-input"
         />
-        <br />
         <input
           type="date" 
           value={taskDeadline}
           onChange={(e) => setTaskDeadline(e.target.value)}
-          style={{ padding: '8px', width: '250px', marginRight: '10px' }}
+          className="task-input"
         />
-        <br />
-        <h3>Task is part of:</h3>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px' }}>
+
+        <h3 className="form-title">Task is part of:</h3>
+        
+        <div className="picker-container">
           
-          {/* Left Side: Unselected Tasks */}
-          <div>
-            <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '5px' }}>Available Tasks</label>
+          {/* Left Side: Available Tasks */}
+          <div className="list-wrapper">
+            <label className="list-label">Available Tasks</label>
             <select
               size={6}
-              style={{ width: '200px', height: '120px', padding: '5px' }}
+              className="task-select"
               value={highlightedAvailable || undefined}
               onChange={(e) => setHighlightedAvailable(e.target.value)}
             >
@@ -110,12 +113,12 @@ function App() {
           </div>
 
           {/* Action Buttons */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div className="button-group">
             <button 
               type="button" 
               onClick={handleSelectParent} 
               disabled={!highlightedAvailable}
-              style={{ padding: '5px 10px', cursor: 'pointer' }}
+              className="action-btn"
             >
               Add ➔
             </button>
@@ -123,18 +126,18 @@ function App() {
               type="button" 
               onClick={handleDeselectParent} 
               disabled={!highlightedSelected}
-              style={{ padding: '5px 10px', cursor: 'pointer' }}
+              className="action-btn"
             >
               ⬅ Remove
             </button>
           </div>
 
           {/* Right Side: Selected Parent Tasks */}
-          <div>
-            <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '5px' }}>Selected Parents</label>
+          <div className="list-wrapper">
+            <label className="list-label">Selected Parents</label>
             <select
               size={6}
-              style={{ width: '200px', height: '120px', padding: '5px' }}
+              className="task-select"
               value={highlightedSelected || undefined}
               onChange={(e) => setHighlightedSelected(e.target.value)}
             >
@@ -144,11 +147,11 @@ function App() {
             </select>
           </div>
         </div>
-        <br />
-        <button type="submit" style={{ padding: '8px 16px' }}>Save to Graph</button>
+
+        <button type="submit" className="submit-btn">Save to Graph</button>
       </form>
 
-      {message && <p style={{ marginTop: '20px', color: 'green' }}>{message}</p>}
+      {message && <p className="status-message">{message}</p>}
     </div>
   );
 }
