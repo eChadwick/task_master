@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Children } from 'react';
 import axios from 'axios';
 import './App.css'; // Make sure this path matches your file structure
 
@@ -14,9 +14,12 @@ function App() {
   const [taskDeadline, setTaskDeadline] = useState('');
   const [message, setMessage] = useState('');
   const [dbTasks, setDbTasks] = useState<Task[]>([]);
-  const [selectedParents, setSelectedParents] = useState<string[]>([]); 
-  const [highlightedAvailable, setHighlightedAvailable] = useState<string>(''); 
-  const [highlightedSelected, setHighlightedSelected] = useState<string>(''); 
+  const [selectedParents, setSelectedParents] = useState<string[]>([]);
+  const [highlightedAvailableParent, sethighlightedAvailableParent] = useState<string>('');
+  const [highlightedSelectedParent, sethighlightedSelectedParent] = useState<string>('');
+  const [selectedChildren, setSelectedChildren] = useState<string[]>([]);
+  const [highlightedAvailableChild, setHighlightedAvailableChild] = useState<string>('');
+  const [highlightedSelectedChild, setHighlightedSelectedChild] = useState<string>('');
 
   useEffect(() => {
     async function fetchTasks() {
@@ -30,18 +33,36 @@ function App() {
     fetchTasks();
   }, []);
 
-  const unselectedTasks = dbTasks.filter(task => !selectedParents.includes(task.name));
+  const unselectedParents = dbTasks.filter(
+    task => !selectedParents.includes(task.name) && !selectedChildren.includes(task.name)
+  );
 
   const handleSelectParent = () => {
-    if (!highlightedAvailable) return;
-    setSelectedParents(prev => [...prev, highlightedAvailable]);
-    setHighlightedAvailable(''); 
+    if (!highlightedAvailableParent) return;
+    setSelectedParents(prev => [...prev, highlightedAvailableParent]);
+    sethighlightedAvailableParent('');
   };
 
   const handleDeselectParent = () => {
-    if (!highlightedSelected) return;
-    setSelectedParents(prev => prev.filter(name => name !== highlightedSelected));
-    setHighlightedSelected(''); 
+    if (!highlightedSelectedParent) return;
+    setSelectedParents(prev => prev.filter(name => name !== highlightedSelectedParent));
+    sethighlightedSelectedParent('');
+  };
+
+  const unselectedChildren = dbTasks.filter(
+    task => !selectedChildren.includes(task.name) && !selectedParents.includes(task.name)
+  );
+
+  const handleSelectChild = () => {
+    if (!highlightedAvailableChild) return;
+    setSelectedChildren(prev => [...prev, highlightedAvailableChild]);
+    setHighlightedAvailableChild('');
+  };
+
+  const handleDeselectChild = () => {
+    if (!highlightedSelectedChild) return;
+    setSelectedChildren(prev => prev.filter(name => name !== highlightedSelectedChild));
+    setHighlightedSelectedChild('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,7 +74,8 @@ function App() {
         name: taskName,
         details: taskDetails || null,
         deadline: taskDeadline || null,
-        parents: selectedParents
+        parents: selectedParents,
+        children: selectedChildren
       });
 
       setMessage(`Success! Database ID: ${response.data.id}`);
@@ -61,6 +83,7 @@ function App() {
       setTaskDetails('');
       setTaskDeadline('');
       setSelectedParents([]);
+      setSelectedChildren([]);
     } catch (error) {
       setMessage(`Error: ${error.response?.data?.detail || 'Something went wrong'}`);
       console.error(error);
@@ -87,26 +110,26 @@ function App() {
           className="task-input"
         />
         <input
-          type="date" 
+          type="date"
           value={taskDeadline}
           onChange={(e) => setTaskDeadline(e.target.value)}
           className="task-input"
         />
 
         <h3 className="form-title">Task is part of:</h3>
-        
+
         <div className="picker-container">
-          
+
           {/* Left Side: Available Tasks */}
           <div className="list-wrapper">
             <label className="list-label">Available Tasks</label>
             <select
               size={6}
               className="task-select"
-              value={highlightedAvailable || undefined}
-              onChange={(e) => setHighlightedAvailable(e.target.value)}
+              value={highlightedAvailableParent || undefined}
+              onChange={(e) => sethighlightedAvailableParent(e.target.value)}
             >
-              {unselectedTasks.map(task => (
+              {unselectedParents.map(task => (
                 <option key={task.name} value={task.name}>{task.name}</option>
               ))}
             </select>
@@ -114,18 +137,18 @@ function App() {
 
           {/* Action Buttons */}
           <div className="button-group">
-            <button 
-              type="button" 
-              onClick={handleSelectParent} 
-              disabled={!highlightedAvailable}
+            <button
+              type="button"
+              onClick={handleSelectParent}
+              disabled={!highlightedAvailableParent}
               className="action-btn"
             >
               Add ➔
             </button>
-            <button 
-              type="button" 
-              onClick={handleDeselectParent} 
-              disabled={!highlightedSelected}
+            <button
+              type="button"
+              onClick={handleDeselectParent}
+              disabled={!highlightedSelectedParent}
               className="action-btn"
             >
               ⬅ Remove
@@ -138,10 +161,60 @@ function App() {
             <select
               size={6}
               className="task-select"
-              value={highlightedSelected || undefined}
-              onChange={(e) => setHighlightedSelected(e.target.value)}
+              value={highlightedSelectedParent || undefined}
+              onChange={(e) => sethighlightedSelectedParent(e.target.value)}
             >
               {selectedParents.map(name => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <h3 className="form-title">Task depends on:</h3>
+        <div className="picker-container">
+          <div className="list-wrapper">
+            <label className="list-label">Available Tasks</label>
+            <select
+              size={6}
+              className="task-select"
+              value={highlightedAvailableChild || undefined}
+              onChange={(e) => setHighlightedAvailableChild(e.target.value)}
+            >
+              {unselectedChildren.map(task => (
+                <option key={task.name} value={task.name}>{task.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="button-group">
+            <button
+              type="button"
+              onClick={handleSelectChild}
+              disabled={!highlightedAvailableChild}
+              className="action-btn"
+            >
+              Add ➔
+            </button>
+            <button
+              type="button"
+              onClick={handleDeselectChild}
+              disabled={!highlightedSelectedChild}
+              className="action-btn"
+            >
+              ⬅ Remove
+            </button>
+          </div>
+
+          <div className="list-wrapper">
+            <label className="list-label">Selected Children</label>
+            <select
+              size={6}
+              className="task-select"
+              value={highlightedSelectedChild || undefined}
+              onChange={(e) => setHighlightedSelectedChild(e.target.value)}
+            >
+              {selectedChildren.map(name => (
                 <option key={name} value={name}>{name}</option>
               ))}
             </select>
