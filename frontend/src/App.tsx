@@ -64,10 +64,10 @@ function App() {
   };
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
+    <div style={{ padding: '40px', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <h2>Graph Database Task Slice</h2>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
         <input
           type="text"
           value={taskName}
