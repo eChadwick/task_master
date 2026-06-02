@@ -21,15 +21,15 @@ function App() {
   const [highlightedAvailableChild, setHighlightedAvailableChild] = useState<string>('');
   const [highlightedSelectedChild, setHighlightedSelectedChild] = useState<string>('');
 
-  useEffect(() => {
-    async function fetchTasks() {
-      try {
-        const response = await axios.get('http://localhost:8000/api/tasks');
-        setDbTasks(response.data);
-      } catch (error) {
-        console.error("Failed to fetch live tasks:", error);
-      }
+  const fetchTasks = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/tasks');
+      setDbTasks(response.data);
+    } catch (error) {
+      console.error("Failed to fetch live tasks:", error);
     }
+  };
+  useEffect(() => {
     fetchTasks();
   }, []);
 
@@ -79,6 +79,7 @@ function App() {
       });
 
       setMessage(`Success! Database ID: ${response.data.id}`);
+      await fetchTasks();
       setTaskName('');
       setTaskDetails('');
       setTaskDeadline('');
