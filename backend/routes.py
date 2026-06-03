@@ -47,6 +47,21 @@ def create_task(payload: TaskCreateRequest):
         "status": "Saved to DB!"
     }
 
+@router.get("/tasks/{task_name}")
+def get_single_task(task_name: str):
+    task = Task.nodes.get_or_none(name=task_name)
+    
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+        
+    return {
+        "name": task.name,
+        "details": task.details,
+        "deadline": task.deadline,
+        "parents": [parent.name for parent in task.parents.all()],
+        "children": [child.name for child in task.children.all()]
+    }
+
 @router.get("/tasks")
 def get_tasks():
     return [
