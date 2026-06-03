@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CreateTaskPage } from './pages/CreateTaskPage';
+import { ViewTaskPage } from './pages/ViewTaskPage'
 import './App.css';
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
         <Routes>
           <Route path="/" element={<CreateTaskPage />} />
           <Route path="/tasks/create" element={<CreateTaskPage />} />
+          <Route path="/tasks/view/:task_name" element={<ViewTaskPage />} />
         </Routes>
       </div>
     </BrowserRouter>
