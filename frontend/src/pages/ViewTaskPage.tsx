@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 interface TaskData {
   name: string;
@@ -36,16 +36,24 @@ export function ViewTaskPage() {
       <p><strong>Deadline:</strong> {task.deadline || 'No deadline set'}</p>
 
       <h3>Parents:</h3>
-      {task.parents.length === 0 ? <p>None</p> : (
-        <ul>
-          {task.parents.map((p) => <li key={p}>{p}</li>)}
+      {task.parents.length === 0 ? <p className="no-tasks">None</p> : (
+        <ul className="task-link-list">
+          {task.parents.map((p) => (
+            <li key={p}>
+              <Link to={`/tasks/view/${encodeURIComponent(p)}`}>{p}</Link>
+            </li>
+          ))}
         </ul>
       )}
 
       <h3>Children:</h3>
-      {task.children.length === 0 ? <p>None</p> : (
-        <ul>
-          {task.children.map((c) => <li key={c}>{c}</li>)}
+      {task.children.length === 0 ? <p className="no-tasks">None</p> : (
+        <ul className="task-link-list">
+          {task.children.map((c) => (
+            <li key={c}>
+              <Link to={`/tasks/view/${encodeURIComponent(c)}`}>{c}</Link>
+            </li>
+          ))}
         </ul>
       )}
     </div>

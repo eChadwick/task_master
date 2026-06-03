@@ -90,3 +90,35 @@
   padding: 20px;
   color: #666;
 }
+
+/* Strips out ugly defaults from the lists */
+.task-link-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+/* Spaces out the list rows cleanly */
+.task-link-list li {
+  margin-bottom: 8px;
+}
+
+/* Flat style: pure typography link layout */
+.task-link-list a {
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Crisp interactive text line on hover */
+.task-link-list a:hover {
+  color: #004499;
+  border-bottom-color: #004499;
+}
+
+.no-tasks {
+  color: #888;
+  font-style: italic;
+}
