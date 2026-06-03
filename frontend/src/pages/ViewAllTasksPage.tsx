@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// Step 1: Import MarkerType from @xyflow/react
 import { ReactFlow, Background, Controls, MarkerType } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -20,23 +19,26 @@ interface FlowNode {
   id: string;
   position: { x: number; y: number };
   data: { label: string };
-  style?: React.CSSProperties;
+  className?: string;
 }
 
-// Step 2: Update the FlowEdge interface to include marker and style properties
 interface FlowEdge {
   id: string;
   source: string;
   target: string;
   markerEnd?: {
     type: MarkerType;
-    color?: string; // Optional: specify a color for the arrow
+    color?: string;
   };
-  style?: React.CSSProperties; // Optional: style the line itself
 }
 
+// Clean, standard configuration object for global edge styles
+const edgeOptions = {
+  style: { stroke: '#999', strokeWidth: 2 },
+};
+
 export function ViewAllTasksPage() {
-  const navigate = useNavigate(); // Hook to programmatically push new browser paths
+  const navigate = useNavigate();
   const [nodes, setNodes] = useState<FlowNode[]>([]);
   const [edges, setEdges] = useState<FlowEdge[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,31 +53,18 @@ export function ViewAllTasksPage() {
       .then((data: { nodes: BackendNode[]; edges: BackendEdge[] }) => {
         const mappedNodes = data.nodes.map((node, index) => ({
           id: node.id,
-          // Adjusted layout spacing for clearer visualization
           position: { x: (index % 3) * 280, y: Math.floor(index / 3) * 180 },
           data: { label: node.name },
-          style: { 
-            background: '#f0f4f8', 
-            border: '1px solid #0066cc', 
-            borderRadius: '4px', 
-            padding: '10px',
-            cursor: 'pointer' // Changes mouse to a hand pointer to indicate it is clickable
-          }
+          className: 'task-graph-node'
         }));
 
-        // Step 3: Modify the mapping logic to add arrowheads (markerEnd)
         const mappedEdges = data.edges.map((edge) => ({
           id: edge.id,
           source: edge.source,
           target: edge.target,
-          // This creates the arrow at the 'target' end of the line
           markerEnd: {
-            type: MarkerType.ArrowClosed, // A solid, closed arrowhead
-            color: '#999', // Color of the arrowhead
-          },
-          style: {
-            stroke: '#999',
-            strokeWidth: 2,
+            type: MarkerType.ArrowClosed,
+            color: '#999',
           }
         }));
 
@@ -97,12 +86,13 @@ export function ViewAllTasksPage() {
   if (loading) return <div className="task-view-loading">Loading task graph...</div>;
 
   return (
-    <div className="task-view-container" style={{ width: '100%', height: '80vh' }}>
+    <div className="task-view-container graph-container-viewport">
       <h1>All Tasks</h1>
-      <div style={{ width: '100%', height: '100%', border: '1px solid #ccc', borderRadius: '8px' }}>
+      <div className="graph-canvas-frame">
         <ReactFlow 
           nodes={nodes} 
           edges={edges} 
+          defaultEdgeOptions={edgeOptions} // Natively applies styles to lines
           onNodeClick={handleNodeClick}
           fitView
         >

@@ -122,3 +122,30 @@
   color: #888;
   font-style: italic;
 }
+
+/* The outer viewport containers */
+.graph-container-viewport {
+  width: 100%;
+  height: 80vh;
+}
+
+.graph-canvas-frame {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* Custom styled node boxes managed via React Flow class injection */
+.task-graph-node {
+  background: #f0f4f8;
+  border: 1px solid #0066cc;
+  border-radius: 4px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.react-flow__edge-path {
+  stroke: #999 !important;
+  stroke-width: 2 !important;
+}
