@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-// A simple interface matching the JSON structure your backend returns
 interface TaskData {
   name: string;
   details: string | null;
@@ -20,21 +19,19 @@ export function ViewTaskPage() {
 
     fetch(`http://localhost:8000/api/tasks/${encodeURIComponent(task_name)}`)
       .then((res) => {
-        if (!res.ok) {
-          throw new Error('Task not found in database');
-        }
+        if (!res.ok) throw new Error('Task not found in database');
         return res.json();
       })
       .then((data: TaskData) => setTask(data))
       .catch((err) => setError(err.message));
   }, [task_name]);
 
-  if (error) return <div style={{ padding: '20px', color: 'red' }}>Error: {error}</div>;
-  if (!task) return <div style={{ padding: '20px' }}>Loading task data...</div>;
+  if (error) return <div className="task-view-error">Error: {error}</div>;
+  if (!task) return <div className="task-view-loading">Loading task data...</div>;
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>{task.name}</h1>
+    <div className="task-view-container">
+      <h1>View Task: {task.name}</h1>
       <p><strong>Details:</strong> {task.details || 'No details provided'}</p>
       <p><strong>Deadline:</strong> {task.deadline || 'No deadline set'}</p>
 
