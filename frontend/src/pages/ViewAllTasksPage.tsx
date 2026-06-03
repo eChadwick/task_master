@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ReactFlow, Background, Controls } from '@xyflow/react';
+// Step 1: Import MarkerType from @xyflow/react
+import { ReactFlow, Background, Controls, MarkerType } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 interface BackendNode {
@@ -22,10 +23,16 @@ interface FlowNode {
   style?: React.CSSProperties;
 }
 
+// Step 2: Update the FlowEdge interface to include marker and style properties
 interface FlowEdge {
   id: string;
   source: string;
   target: string;
+  markerEnd?: {
+    type: MarkerType;
+    color?: string; // Optional: specify a color for the arrow
+  };
+  style?: React.CSSProperties; // Optional: style the line itself
 }
 
 export function ViewAllTasksPage() {
@@ -44,7 +51,8 @@ export function ViewAllTasksPage() {
       .then((data: { nodes: BackendNode[]; edges: BackendEdge[] }) => {
         const mappedNodes = data.nodes.map((node, index) => ({
           id: node.id,
-          position: { x: (index % 3) * 250, y: Math.floor(index / 3) * 150 },
+          // Adjusted layout spacing for clearer visualization
+          position: { x: (index % 3) * 280, y: Math.floor(index / 3) * 180 },
           data: { label: node.name },
           style: { 
             background: '#f0f4f8', 
@@ -55,8 +63,24 @@ export function ViewAllTasksPage() {
           }
         }));
 
+        // Step 3: Modify the mapping logic to add arrowheads (markerEnd)
+        const mappedEdges = data.edges.map((edge) => ({
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          // This creates the arrow at the 'target' end of the line
+          markerEnd: {
+            type: MarkerType.ArrowClosed, // A solid, closed arrowhead
+            color: '#999', // Color of the arrowhead
+          },
+          style: {
+            stroke: '#999',
+            strokeWidth: 2,
+          }
+        }));
+
         setNodes(mappedNodes);
-        setEdges(data.edges);
+        setEdges(mappedEdges); 
         setLoading(false);
       })
       .catch((err) => {
@@ -65,9 +89,7 @@ export function ViewAllTasksPage() {
       });
   }, []);
 
-  // This fires whenever any node container inside the canvas is clicked
   const handleNodeClick = (_event: React.MouseEvent, node: FlowNode) => {
-    // Navigates seamlessly to the single task route using the node's unique name id
     navigate(`/tasks/view/${encodeURIComponent(node.id)}`);
   };
 
@@ -81,7 +103,7 @@ export function ViewAllTasksPage() {
         <ReactFlow 
           nodes={nodes} 
           edges={edges} 
-          onNodeClick={handleNodeClick} // Wire up the click listener
+          onNodeClick={handleNodeClick}
           fitView
         >
           <Background color="#ccc" gap={16} />
