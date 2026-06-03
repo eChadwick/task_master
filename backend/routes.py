@@ -64,11 +64,24 @@ def get_single_task(task_name: str):
 
 @router.get("/tasks")
 def get_tasks():
-    return [
+    all_tasks = Task.nodes.all()
+    
+    nodes = [
         {
+            "id": task.name, 
             "name": task.name,
-            "details": task.details,
-            "deadline": task.deadline
+            "details": task.details
         }
-        for task in Task.nodes.all()
+        for task in all_tasks
     ]
+    
+    edges = []
+    for task in all_tasks:
+        for child in task.children.all():
+            edges.append({
+                "id": f"{task.name}->{child.name}",
+                "source": task.name,
+                "target": child.name
+            })
+            
+    return {"nodes": nodes, "edges": edges}
