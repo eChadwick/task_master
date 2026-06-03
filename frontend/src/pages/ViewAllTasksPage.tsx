@@ -95,6 +95,9 @@ export function ViewAllTasksPage() {
           defaultEdgeOptions={edgeOptions} // Natively applies styles to lines
           onNodeClick={handleNodeClick}
           fitView
+          nodesConnectable={false}
+          nodesDraggable={false}
+          autoPanOnConnect={false}
         >
           <Background color="#ccc" gap={16} />
           <Controls />
