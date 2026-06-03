@@ -31,11 +31,11 @@ export function ViewTaskPage() {
 
   return (
     <div className="task-view-container">
-      <h1>View Task: {task.name}</h1>
+      <h1>{task.name}</h1>
       <p><strong>Details:</strong> {task.details || 'No details provided'}</p>
       <p><strong>Deadline:</strong> {task.deadline || 'No deadline set'}</p>
 
-      <h3>Parents:</h3>
+      <h3>Is Part Of:</h3>
       {task.parents.length === 0 ? <p className="no-tasks">None</p> : (
         <ul className="task-link-list">
           {task.parents.map((p) => (
@@ -46,7 +46,7 @@ export function ViewTaskPage() {
         </ul>
       )}
 
-      <h3>Children:</h3>
+      <h3>Depends On:</h3>
       {task.children.length === 0 ? <p className="no-tasks">None</p> : (
         <ul className="task-link-list">
           {task.children.map((c) => (
