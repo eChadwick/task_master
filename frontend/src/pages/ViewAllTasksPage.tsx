@@ -98,7 +98,7 @@ export function ViewAllTasksPage() {
 
   return (
     <div className="task-view-container" style={{ width: '100%', height: '80vh' }}>
-      <h1>All Tasks Graph</h1>
+      <h1>All Tasks</h1>
       <div style={{ width: '100%', height: '100%', border: '1px solid #ccc', borderRadius: '8px' }}>
         <ReactFlow 
           nodes={nodes} 
