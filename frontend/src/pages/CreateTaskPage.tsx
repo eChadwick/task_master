@@ -76,7 +76,7 @@ export function CreateTaskPage() {
 
   return (
     <div className="app-container">
-      <h2>Graph Database Task Slice</h2>
+      <h2>Create Task</h2>
 
       <form onSubmit={handleSubmit} className="task-form">
         <input
