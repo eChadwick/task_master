@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Spin Up Test Container",
+        "type": "shell",
+        "command": "docker run --name neo4j-vscode-test -p 7788:7687 -e NEO4J_AUTH=none neo4j:5-community; sleep 3",
+        "presentation": {
+          "reveal": "always",
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "Kill Test Container",
+        "type": "shell",
+        "command": "docker rm -f neo4j-vscode-test",
+        "presentation": {
+          "reveal": "always",
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "Start Neo4j and Wait",
+        "type": "shell",
+        "command": "docker ps --format '{{.Names}}' | grep -q '^my-neo4j$' || docker run -d --rm --name my-neo4j -p 7688:7687 -e NEO4J_AUTH=none --health-cmd=\"cypher-shell 'RETURN 1'\" neo4j:latest; until [ \"$(docker inspect --format='{{.State.Health.Status}}' my-neo4j 2>/dev/null)\" = \"healthy\" ]; do sleep 0.5; done",
+        "presentation": {
+          "reveal": "always",
+          "panel": "shared"
+        }
+      }
+    ]
+  }
