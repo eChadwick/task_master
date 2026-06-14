@@ -8,8 +8,9 @@ from neomodel import (
     RelationshipFrom
 )
 
-config = get_config()
-config.database_url = "bolt://neo4j:password123@localhost:7687"
+from config import settings
+
+config.DATABASE_URL = settings.neomodel_cypher_connection_url
 
 
 class Task(StructuredNode):
