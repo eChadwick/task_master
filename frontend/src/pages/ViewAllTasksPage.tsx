@@ -79,7 +79,7 @@ export function ViewAllTasksPage() {
   }, []);
 
   const handleNodeClick = (_event: React.MouseEvent, node: FlowNode) => {
-    navigate(`/tasks/view/${encodeURIComponent(node.id)}`);
+    navigate(`/tasks/${encodeURIComponent(node.id)}`);
   };
 
   if (error) return <div className="task-view-error">Error: {error}</div>;

@@ -40,7 +40,7 @@ export function ViewTaskPage() {
         <ul className="task-link-list">
           {task.parents.map((p) => (
             <li key={p}>
-              <Link to={`/tasks/view/${encodeURIComponent(p)}`}>{p}</Link>
+              <Link to={`/tasks/${encodeURIComponent(p)}`}>{p}</Link>
             </li>
           ))}
         </ul>
@@ -51,7 +51,7 @@ export function ViewTaskPage() {
         <ul className="task-link-list">
           {task.children.map((c) => (
             <li key={c}>
-              <Link to={`/tasks/view/${encodeURIComponent(c)}`}>{c}</Link>
+              <Link to={`/tasks/${encodeURIComponent(c)}`}>{c}</Link>
             </li>
           ))}
         </ul>

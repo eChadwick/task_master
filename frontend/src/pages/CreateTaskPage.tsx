@@ -26,7 +26,7 @@ export function CreateTaskPage() {
   const loadTasks = async () => {
     try {
       const data = await taskApi.getAll();
-      setDbTasks(data);
+      setDbTasks(data.nodes);
     } catch (error) {
       console.error("Failed to fetch live tasks:", error);
     }

@@ -11,8 +11,8 @@ function App() {
         <Routes>
           <Route path="/" element={<CreateTaskPage />} />
           <Route path="/tasks/create" element={<CreateTaskPage />} />
-          <Route path="/tasks/view/:task_name" element={<ViewTaskPage />} />
-          <Route path="/tasks/view/" element={<ViewAllTasksPage />} />
+          <Route path="/tasks/:task_name" element={<ViewTaskPage />} />
+          <Route path="/tasks" element={<ViewAllTasksPage />} />
         </Routes>
       </div>
     </BrowserRouter>
