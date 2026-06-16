@@ -16,10 +16,6 @@ class TaskCreateRequest(BaseModel):
     parents: List[str] = []
     children: List[str] = []
 
-@router.options("/api/tasks")
-def options_tasks():
-    return Response(status_code=200)
-
 @router.post("/tasks", status_code=201)
 def create_task(payload: TaskCreateRequest):
     try:
