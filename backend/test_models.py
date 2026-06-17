@@ -1,8 +1,10 @@
 import pytest
 from fastapi.testclient import TestClient
+from fastapi import HTTPException
 from main import app
 from models import Task
 from error_messages import TaskErrors
+from unittest.mock import patch
 
 client = TestClient(app)
 
@@ -71,3 +73,11 @@ def test_task_create_with_children():
     parent_node = Task.nodes.get(name=parent_response.json()['name'])
     assert child1 in parent_node.children.all()
     assert child2 in parent_node.children.all()
+
+exception_text = 'test excpetion'
+@patch('routes.Task', side_effect=TypeError(exception_text))
+def test_unspecial_error_are_passed_through(_):
+    payload = {"name": "test task"}
+    response = client.post(app.url_path_for("create_task"), json=payload)
+    assert response.status_code == 500
+    assert response.json()['detail'] == exception_text
