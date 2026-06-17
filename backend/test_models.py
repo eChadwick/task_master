@@ -9,8 +9,6 @@ client = TestClient(app)
 
 @pytest.fixture(autouse=True)
 def clear_database():
-    for task in Task.nodes.all():
-        task.delete()
     yield
     for task in Task.nodes.all():
         task.delete()
