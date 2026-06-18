@@ -117,3 +117,43 @@ def test_get_single_task_not_found():
 
     assert response.status_code == 404
     assert response.json()["detail"] == expected_error_detail
+
+def test_get_all_tasks():
+    parent_task = Task(name="Parent Task").save()
+    child_task = Task(name="Child Task").save()
+    parent_task.children.connect(child_task)
+    
+    expected_edge_id = f"{parent_task.name}->{child_task.name}"
+    response = client.get(app.url_path_for("get_tasks"))
+
+    assert response.status_code == 200
+    data = response.json()
+    
+    nodes = data["nodes"]
+    edges = data["edges"]
+    
+    parent_node = next((n for n in nodes if n["id"] == parent_task.name), None)
+    child_node = next((n for n in nodes if n["id"] == child_task.name), None)
+    
+    assert parent_node is not None
+    assert parent_node["name"] == parent_task.name
+    
+    assert child_node is not None
+    assert child_node["name"] == child_task.name
+    
+    assert len(edges) == 1
+    assert edges[0]["id"] == expected_edge_id
+    assert edges[0]["source"] == parent_task.name
+    assert edges[0]["target"] == child_task.name
+
+
+# def test_get_tasks_empty_database(client):
+#     # Act
+#     url = app.url_path_for("get_tasks")
+#     response = client.get(url)
+
+#     # Assert
+#     assert response.status_code == 200
+#     data = response.json()
+#     assert data["nodes"] == []
+#     assert data["edges"] == []
