@@ -1,5 +1,4 @@
 from neomodel import (
-    config,
     StructuredNode,
     StringProperty,
     get_config,
@@ -10,7 +9,7 @@ from neomodel import (
 
 from config import settings
 
-config.DATABASE_URL = settings.neomodel_cypher_connection_url
+get_config().database_url = settings.neomodel_cypher_connection_url
 
 
 class Task(StructuredNode):
