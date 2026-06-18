@@ -147,13 +147,10 @@ def test_get_all_tasks():
     assert edges[0]["target"] == child_task.name
 
 
-# def test_get_tasks_empty_database(client):
-#     # Act
-#     url = app.url_path_for("get_tasks")
-#     response = client.get(url)
+def test_get_tasks_empty_database():
+    response = client.get(app.url_path_for("get_tasks"))
 
-#     # Assert
-#     assert response.status_code == 200
-#     data = response.json()
-#     assert data["nodes"] == []
-#     assert data["edges"] == []
+    assert response.status_code == 200
+    data = response.json()
+    assert data["nodes"] == []
+    assert data["edges"] == []
