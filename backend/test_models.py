@@ -109,14 +109,11 @@ def test_get_single_task_success():
     assert child_name in data["children"]
 
 
-# def test_get_single_task_not_found(client):
-#     # Arrange
-#     missing_task_name = "Non Existent Task"
-#     expected_error_detail = "Task not found"
+def test_get_single_task_not_found():
+    not_real_task_name = "Non Existent Task"
+    expected_error_detail = "Task not found"
 
-#     # Act
-#     response = client.get(f"/tasks/{missing_task_name}")
+    response = client.get(app.url_path_for('get_single_task', task_name=not_real_task_name))
 
-#     # Assert
-#     assert response.status_code == 404
-#     assert response.json()["detail"] == expected_error_detail
+    assert response.status_code == 404
+    assert response.json()["detail"] == expected_error_detail
