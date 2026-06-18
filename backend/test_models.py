@@ -1,9 +1,10 @@
-import pytest
+from datetime import datetime
+from error_messages import TaskErrors
 from fastapi.testclient import TestClient
 from fastapi import HTTPException
 from main import app
 from models import Task
-from error_messages import TaskErrors
+import pytest
 from unittest.mock import patch
 
 client = TestClient(app)
@@ -81,3 +82,41 @@ def test_unspecial_error_are_passed_through(_):
     response = client.post(app.url_path_for("create_task"), json=payload)
     assert response.status_code == 500
     assert response.json()['detail'] == exception_text
+
+
+def test_get_single_task_success():
+    parent_name = "Parent Task"
+    parent_task = Task(name=parent_name).save()
+
+    child_name = "Child Task"
+    child_task = Task(name=child_name).save()
+    
+    target_name = "Target Task"
+    target_details = "Target details"
+    target_deadline = datetime.now()
+    target_task = Task(name=target_name, details=target_details, deadline=target_deadline).save()
+    target_task.parents.connect(parent_task)
+    target_task.children.connect(child_task)
+
+    response = client.get(app.url_path_for('get_single_task', task_name=target_task.name))
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["name"] == target_name
+    assert data["details"] == target_details
+    assert data["deadline"] == target_deadline.strftime("%Y-%m-%d")
+    assert parent_name in data["parents"]
+    assert child_name in data["children"]
+
+
+# def test_get_single_task_not_found(client):
+#     # Arrange
+#     missing_task_name = "Non Existent Task"
+#     expected_error_detail = "Task not found"
+
+#     # Act
+#     response = client.get(f"/tasks/{missing_task_name}")
+
+#     # Assert
+#     assert response.status_code == 404
+#     assert response.json()["detail"] == expected_error_detail
