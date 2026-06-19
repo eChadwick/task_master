@@ -15,12 +15,18 @@ export function CreateTaskPage() {
   // Relationship Tracking Arrays
   const [selectedParents, setSelectedParents] = useState<string[]>([]);
   const [selectedChildren, setSelectedChildren] = useState<string[]>([]);
+  const [selectedBlocks, setSelectedBlocks] = useState<string[]>([]);
+  const [selectedBlockedBy, setSelectedBlockedBy] = useState<string[]>([]);
 
   // Active UI Selection Highlights
   const [highlightParentAvail, setHighlightParentAvail] = useState('');
   const [highlightParentSel, setHighlightParentSel] = useState('');
   const [highlightChildAvail, setHighlightChildAvail] = useState('');
   const [highlightChildSel, setHighlightChildSel] = useState('');
+  const [highlightBlocksAvail, setHighlightBlocksAvail] = useState('');
+  const [highlightBlocksSel, setHighlightBlocksSel] = useState('');
+  const [highlightBlockedByAvail, setHighlightBlockedByAvail] = useState('');
+  const [highlightBlockedBySel, setHighlightBlockedBySel] = useState('');
 
   // Fetch Logic
   const loadTasks = async () => {
@@ -36,14 +42,32 @@ export function CreateTaskPage() {
     loadTasks();
   }, []);
 
-  // Use Memoized selectors to prevent calculation churn on every typing stroke
+  // Collect all currently assigned task names to prevent cyclic assignments across boxes
+  const allSelected = useMemo(() => {
+    return [
+      ...selectedParents,
+      ...selectedChildren,
+      ...selectedBlocks,
+      ...selectedBlockedBy
+    ];
+  }, [selectedParents, selectedChildren, selectedBlocks, selectedBlockedBy]);
+
+  // Memoized selectors filtering out tasks that are already assigned anywhere
   const unselectedParents = useMemo(() => {
-    return dbTasks.filter(t => !selectedParents.includes(t.name) && !selectedChildren.includes(t.name));
-  }, [dbTasks, selectedParents, selectedChildren]);
+    return dbTasks.filter(t => !allSelected.includes(t.name) && !selectedParents.includes(t.name));
+  }, [dbTasks, allSelected, selectedParents]);
 
   const unselectedChildren = useMemo(() => {
-    return dbTasks.filter(t => !selectedChildren.includes(t.name) && !selectedParents.includes(t.name));
-  }, [dbTasks, selectedParents, selectedChildren]);
+    return dbTasks.filter(t => !allSelected.includes(t.name) && !selectedChildren.includes(t.name));
+  }, [dbTasks, allSelected, selectedChildren]);
+
+  const unselectedBlocks = useMemo(() => {
+    return dbTasks.filter(t => !allSelected.includes(t.name) && !selectedBlocks.includes(t.name));
+  }, [dbTasks, allSelected, selectedBlocks]);
+
+  const unselectedBlockedBy = useMemo(() => {
+    return dbTasks.filter(t => !allSelected.includes(t.name) && !selectedBlockedBy.includes(t.name));
+  }, [dbTasks, allSelected, selectedBlockedBy]);
 
   // Submit Operations
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,7 +80,9 @@ export function CreateTaskPage() {
         details: taskDetails || null,
         deadline: taskDeadline || null,
         is_part_of: selectedParents,
-        depends_on: selectedChildren
+        depends_on: selectedChildren,
+        blocks: selectedBlocks,
+        is_blocked_by: selectedBlockedBy
       });
 
       setMessage(`Success! Database ID: ${res.id}`);
@@ -68,6 +94,8 @@ export function CreateTaskPage() {
       setTaskDeadline('');
       setSelectedParents([]);
       setSelectedChildren([]);
+      setSelectedBlocks([]);
+      setSelectedBlockedBy([]);
     } catch (error: any) {
       setMessage(`Error: ${error.response?.data?.detail || 'Something went wrong'}`);
       console.error(error);
@@ -143,6 +171,52 @@ export function CreateTaskPage() {
             if (!highlightChildSel) return;
             setSelectedChildren(prev => prev.filter(n => n !== highlightChildSel));
             setHighlightChildSel('');
+          }}
+        />
+
+        {/* Blocks Relationship List Block */}
+        <DualListBox
+          title="Task blocks:"
+          availableLabel="Available Tasks"
+          selectedLabel="Selected Tasks"
+          availableItems={unselectedBlocks.map(t => t.name)}
+          selectedItems={selectedBlocks}
+          highlightedAvailable={highlightBlocksAvail}
+          highlightedSelected={highlightBlocksSel}
+          onHighlightAvailable={setHighlightBlocksAvail}
+          onHighlightSelected={setHighlightBlocksSel}
+          onAdd={() => {
+            if (!highlightBlocksAvail) return;
+            setSelectedBlocks(prev => [...prev, highlightBlocksAvail]);
+            setHighlightBlocksAvail('');
+          }}
+          onRemove={() => {
+            if (!highlightBlocksSel) return;
+            setSelectedBlocks(prev => prev.filter(n => n !== highlightBlocksSel));
+            setHighlightBlocksSel('');
+          }}
+        />
+
+        {/* Is Blocked By Relationship List Block */}
+        <DualListBox
+          title="Task is blocked by:"
+          availableLabel="Available Tasks"
+          selectedLabel="Selected Tasks"
+          availableItems={unselectedBlockedBy.map(t => t.name)}
+          selectedItems={selectedBlockedBy}
+          highlightedAvailable={highlightBlockedByAvail}
+          highlightedSelected={highlightBlockedBySel}
+          onHighlightAvailable={setHighlightBlockedByAvail}
+          onHighlightSelected={setHighlightBlockedBySel}
+          onAdd={() => {
+            if (!highlightBlockedByAvail) return;
+            setSelectedBlockedBy(prev => [...prev, highlightBlockedByAvail]);
+            setHighlightBlockedByAvail('');
+          }}
+          onRemove={() => {
+            if (!highlightBlockedBySel) return;
+            setSelectedBlockedBy(prev => prev.filter(n => n !== highlightBlockedBySel));
+            setHighlightBlockedBySel('');
           }}
         />
 
