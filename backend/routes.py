@@ -16,6 +16,7 @@ class TaskCreateRequest(BaseModel):
     deadline: Optional[date] = None
     is_part_of: List[str] = []
     depends_on: List[str] = []
+    blocks: List[str] = []
 
 
 @router.post("/tasks", status_code=201)
@@ -32,6 +33,10 @@ def create_task(payload: TaskCreateRequest):
             child_node = Task.nodes.get_or_none(name=child_name)
             if child_node:
                 new_task.depends_on.connect(child_node)
+        for task_name in payload.blocks:
+            parent_node = Task.nodes.get_or_none(name=task_name)
+            if parent_node:
+                new_task.blocks.connect(parent_node)
     except UniqueProperty:
         raise HTTPException(status_code=400, detail=TaskErrors.DUPLICATE_NAME)
     except Exception as e:
@@ -44,6 +49,7 @@ def create_task(payload: TaskCreateRequest):
         "deadline": new_task.deadline,
         "is_part_of": [task.name for task in new_task.is_part_of.all()],
         "depends_on": [task.name for task in new_task.depends_on.all()],
+        "blocks": [task.name for task in new_task.blocks.all()],
         "status": "Saved to DB!",
     }
 

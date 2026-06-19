@@ -44,16 +44,26 @@ def test_create_duplicate_task_is_400():
 def test_task_create_with_parent():
     parent1 = Task(name="parent1").save()
     parent2 = Task(name="parent2").save()
-    payload = {"name": "child", "is_part_of": [parent1.name, parent2.name]}
+    blocked_parent1 = Task(name="blocked parent1").save()
+    blocked_parent2 = Task(name="blocked_parent2").save()
+    payload = {
+        "name": "child",
+        "is_part_of": [parent1.name, parent2.name],
+        "blocks": [blocked_parent1.name, blocked_parent2.name],
+    }
     child_response = client.post(app.url_path_for("create_task"), json=payload)
 
     assert child_response.status_code == 201
     assert parent1.name in child_response.json()["is_part_of"]
     assert parent2.name in child_response.json()["is_part_of"]
+    assert blocked_parent1.name in child_response.json()["blocks"]
+    assert blocked_parent2.name in child_response.json()["blocks"]
 
     child_node = Task.nodes.get(name=child_response.json()["name"])
     assert parent1 in child_node.is_part_of.all()
     assert parent2 in child_node.is_part_of.all()
+    assert blocked_parent1 in child_node.blocks.all()
+    assert blocked_parent2 in child_node.blocks.all()
 
 
 def test_task_create_with_children():
