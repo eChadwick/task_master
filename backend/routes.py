@@ -13,17 +13,17 @@ class TaskCreateRequest(BaseModel):
     name: str
     details: Optional[str] = None
     deadline: Optional[date] = None
-    parents: List[str] = []
+    is_part_of: List[str] = []
     children: List[str] = []
 
 @router.post("/tasks", status_code=201)
 def create_task(payload: TaskCreateRequest):
     try:
         new_task = Task(name=payload.name, details=payload.details, deadline=payload.deadline).save()
-        for parent_name in payload.parents:
+        for parent_name in payload.is_part_of:
             parent_node = Task.nodes.get_or_none(name=parent_name)
             if parent_node:
-                new_task.parents.connect(parent_node)
+                new_task.is_part_of.connect(parent_node)
         for child_name in payload.children:
             child_node = Task.nodes.get_or_none(name=child_name)
             if child_node:
@@ -38,7 +38,7 @@ def create_task(payload: TaskCreateRequest):
         "name": new_task.name,
         "details": new_task.details,
         "deadline": new_task.deadline,
-        "parents": [parent.name for parent in new_task.parents.all()],
+        "is_part_of": [task.name for task in new_task.is_part_of.all()],
         "children": [child.name for child in new_task.children.all()],
         "status": "Saved to DB!"
     }
@@ -54,7 +54,7 @@ def get_single_task(task_name: str):
         "name": task.name,
         "details": task.details,
         "deadline": task.deadline,
-        "parents": [parent.name for parent in task.parents.all()],
+        "is_part_of": [task.name for task in task.is_part_of.all()],
         "children": [child.name for child in task.children.all()]
     }
 

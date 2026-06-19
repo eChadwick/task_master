@@ -10,6 +10,7 @@
               "backend/",
               "-v",
               "-s",
+              "-x",
               "--cov=.",
               "--cov-report=term-missing"
             ],

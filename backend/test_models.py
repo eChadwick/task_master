@@ -45,17 +45,17 @@ def test_task_create_with_parent():
     parent2 = Task(name='parent2').save()
     payload = {
         'name': 'child',
-        'parents': [parent1.name, parent2.name]
+        'is_part_of': [parent1.name, parent2.name]
     }
     child_response = client.post(app.url_path_for('create_task'), json=payload)
     
     assert child_response.status_code == 201
-    assert parent1.name in child_response.json()['parents']
-    assert parent2.name in child_response.json()['parents']
+    assert parent1.name in child_response.json()['is_part_of']
+    assert parent2.name in child_response.json()['is_part_of']
 
     child_node = Task.nodes.get(name=child_response.json()['name'])
-    assert parent1 in child_node.parents.all()
-    assert parent2 in child_node.parents.all()
+    assert parent1 in child_node.is_part_of.all()
+    assert parent2 in child_node.is_part_of.all()
 
 def test_task_create_with_children():
     child1 = Task(name='child1').save()
@@ -95,7 +95,7 @@ def test_get_single_task_success():
     target_details = "Target details"
     target_deadline = datetime.now()
     target_task = Task(name=target_name, details=target_details, deadline=target_deadline).save()
-    target_task.parents.connect(parent_task)
+    target_task.is_part_of.connect(parent_task)
     target_task.children.connect(child_task)
 
     response = client.get(app.url_path_for('get_single_task', task_name=target_task.name))
@@ -105,7 +105,7 @@ def test_get_single_task_success():
     assert data["name"] == target_name
     assert data["details"] == target_details
     assert data["deadline"] == target_deadline.strftime("%Y-%m-%d")
-    assert parent_name in data["parents"]
+    assert parent_name in data["is_part_of"]
     assert child_name in data["children"]
 
 
