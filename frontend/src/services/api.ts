@@ -9,8 +9,8 @@ export interface Task {
 }
 
 export interface CreateTaskPayload extends Task {
-  parents: string[];
-  children: string[];
+  is_part_of: string[];
+  depends_on: string[];
 }
 
 export const taskApi = {
@@ -18,7 +18,7 @@ export const taskApi = {
     const response = await axios.get<Task[]>(`${API_BASE_URL}/tasks`);
     return response.data;
   },
-  
+
   create: async (payload: CreateTaskPayload): Promise<{ id: string }> => {
     const response = await axios.post(`${API_BASE_URL}/tasks`, payload);
     return response.data;

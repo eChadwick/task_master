@@ -8,7 +8,7 @@ export function CreateTaskPage() {
   const [taskDetails, setTaskDetails] = useState('');
   const [taskDeadline, setTaskDeadline] = useState('');
   const [message, setMessage] = useState('');
-  
+
   // Loaded state
   const [dbTasks, setDbTasks] = useState<Task[]>([]);
 
@@ -55,13 +55,13 @@ export function CreateTaskPage() {
         name: taskName,
         details: taskDetails || null,
         deadline: taskDeadline || null,
-        parents: selectedParents,
-        children: selectedChildren
+        is_part_of: selectedParents,
+        depends_on: selectedChildren
       });
 
       setMessage(`Success! Database ID: ${res.id}`);
       await loadTasks();
-      
+
       // Clear all state forms cleanly
       setTaskName('');
       setTaskDetails('');
