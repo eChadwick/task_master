@@ -59,7 +59,7 @@ def test_task_create_with_parent():
 def test_task_create_with_children():
     child1 = Task(name="child1").save()
     child2 = Task(name="child2").save()
-    payload = {"name": "parent_task", "children": [child1.name, child2.name]}
+    payload = {"name": "parent_task", "depends_on": [child1.name, child2.name]}
 
     parent_response = client.post(app.url_path_for("create_task"), json=payload)
 

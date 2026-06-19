@@ -15,7 +15,7 @@ class TaskCreateRequest(BaseModel):
     details: Optional[str] = None
     deadline: Optional[date] = None
     is_part_of: List[str] = []
-    children: List[str] = []
+    depends_on: List[str] = []
 
 
 @router.post("/tasks", status_code=201)
@@ -28,7 +28,7 @@ def create_task(payload: TaskCreateRequest):
             parent_node = Task.nodes.get_or_none(name=parent_name)
             if parent_node:
                 new_task.is_part_of.connect(parent_node)
-        for child_name in payload.children:
+        for child_name in payload.depends_on:
             child_node = Task.nodes.get_or_none(name=child_name)
             if child_node:
                 new_task.depends_on.connect(child_node)
