@@ -64,12 +64,12 @@ def test_task_create_with_children():
     parent_response = client.post(app.url_path_for("create_task"), json=payload)
 
     assert parent_response.status_code == 201
-    assert child1.name in parent_response.json()["children"]
-    assert child2.name in parent_response.json()["children"]
+    assert child1.name in parent_response.json()["depends_on"]
+    assert child2.name in parent_response.json()["depends_on"]
 
     parent_node = Task.nodes.get(name=parent_response.json()["name"])
-    assert child1 in parent_node.children.all()
-    assert child2 in parent_node.children.all()
+    assert child1 in parent_node.depends_on.all()
+    assert child2 in parent_node.depends_on.all()
 
 
 exception_text = "test excpetion"
@@ -97,7 +97,7 @@ def test_get_single_task_success():
         name=target_name, details=target_details, deadline=target_deadline
     ).save()
     target_task.is_part_of.connect(parent_task)
-    target_task.children.connect(child_task)
+    target_task.depends_on.connect(child_task)
 
     response = client.get(
         app.url_path_for("get_single_task", task_name=target_task.name)
@@ -109,7 +109,7 @@ def test_get_single_task_success():
     assert data["details"] == target_details
     assert data["deadline"] == target_deadline.strftime("%Y-%m-%d")
     assert parent_name in data["is_part_of"]
-    assert child_name in data["children"]
+    assert child_name in data["depends_on"]
 
 
 def test_get_single_task_not_found():
@@ -127,7 +127,7 @@ def test_get_single_task_not_found():
 def test_get_all_tasks():
     parent_task = Task(name="Parent Task").save()
     child_task = Task(name="Child Task").save()
-    parent_task.children.connect(child_task)
+    parent_task.depends_on.connect(child_task)
 
     expected_edge_id = f"{parent_task.name}->{child_task.name}"
     response = client.get(app.url_path_for("get_tasks"))

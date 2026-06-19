@@ -17,4 +17,4 @@ class Task(StructuredNode):
     details = StringProperty(required=False)
     deadline = DateProperty(required=False)
     is_part_of = RelationshipFrom("Task", "DEPENDS_ON")
-    children = RelationshipTo("Task", "DEPENDS_ON")
+    depends_on = RelationshipTo("Task", "DEPENDS_ON")

@@ -31,7 +31,7 @@ def create_task(payload: TaskCreateRequest):
         for child_name in payload.children:
             child_node = Task.nodes.get_or_none(name=child_name)
             if child_node:
-                new_task.children.connect(child_node)
+                new_task.depends_on.connect(child_node)
     except UniqueProperty:
         raise HTTPException(status_code=400, detail=TaskErrors.DUPLICATE_NAME)
     except Exception as e:
@@ -43,7 +43,7 @@ def create_task(payload: TaskCreateRequest):
         "details": new_task.details,
         "deadline": new_task.deadline,
         "is_part_of": [task.name for task in new_task.is_part_of.all()],
-        "children": [child.name for child in new_task.children.all()],
+        "depends_on": [task.name for task in new_task.depends_on.all()],
         "status": "Saved to DB!",
     }
 
@@ -60,7 +60,7 @@ def get_single_task(task_name: str):
         "details": task.details,
         "deadline": task.deadline,
         "is_part_of": [task.name for task in task.is_part_of.all()],
-        "children": [child.name for child in task.children.all()],
+        "depends_on": [task.name for task in task.depends_on.all()],
     }
 
 
@@ -75,7 +75,7 @@ def get_tasks():
 
     edges = []
     for task in all_tasks:
-        for child in task.children.all():
+        for child in task.depends_on.all():
             edges.append(
                 {
                     "id": f"{task.name}->{child.name}",
