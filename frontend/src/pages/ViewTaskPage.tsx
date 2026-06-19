@@ -36,9 +36,9 @@ export function ViewTaskPage() {
       <p><strong>Deadline:</strong> {task.deadline || 'No deadline set'}</p>
 
       <h3>Is Part Of:</h3>
-      {task.parents.length === 0 ? <p className="no-tasks">None</p> : (
+      {task.is_part_of.length === 0 ? <p className="no-tasks">None</p> : (
         <ul className="task-link-list">
-          {task.parents.map((p) => (
+          {task.is_part_of.map((p) => (
             <li key={p}>
               <Link to={`/tasks/${encodeURIComponent(p)}`}>{p}</Link>
             </li>
@@ -47,9 +47,9 @@ export function ViewTaskPage() {
       )}
 
       <h3>Depends On:</h3>
-      {task.children.length === 0 ? <p className="no-tasks">None</p> : (
+      {task.depends_on.length === 0 ? <p className="no-tasks">None</p> : (
         <ul className="task-link-list">
-          {task.children.map((c) => (
+          {task.depends_on.map((c) => (
             <li key={c}>
               <Link to={`/tasks/${encodeURIComponent(c)}`}>{c}</Link>
             </li>
