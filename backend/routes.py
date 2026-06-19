@@ -17,6 +17,7 @@ class TaskCreateRequest(BaseModel):
     is_part_of: List[str] = []
     depends_on: List[str] = []
     blocks: List[str] = []
+    is_blocked_by: List[str] = []
 
 
 @router.post("/tasks", status_code=201)
@@ -37,6 +38,10 @@ def create_task(payload: TaskCreateRequest):
             parent_node = Task.nodes.get_or_none(name=task_name)
             if parent_node:
                 new_task.blocks.connect(parent_node)
+        for task_name in payload.is_blocked_by:
+            child_node = Task.nodes.get_or_none(name=task_name)
+            if child_node:
+                new_task.is_blocked_by.connect(child_node)
     except UniqueProperty:
         raise HTTPException(status_code=400, detail=TaskErrors.DUPLICATE_NAME)
     except Exception as e:
@@ -50,6 +55,7 @@ def create_task(payload: TaskCreateRequest):
         "is_part_of": [task.name for task in new_task.is_part_of.all()],
         "depends_on": [task.name for task in new_task.depends_on.all()],
         "blocks": [task.name for task in new_task.blocks.all()],
+        "is_blocked_by": [task.name for task in new_task.is_blocked_by.all()],
         "status": "Saved to DB!",
     }
 

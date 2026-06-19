@@ -69,17 +69,27 @@ def test_task_create_with_parent():
 def test_task_create_with_children():
     child1 = Task(name="child1").save()
     child2 = Task(name="child2").save()
-    payload = {"name": "parent_task", "depends_on": [child1.name, child2.name]}
+    blocking_child1 = Task(name="blocking child1").save()
+    blocking_child2 = Task(name="blocking child2").save()
+    payload = {
+        "name": "parent_task",
+        "depends_on": [child1.name, child2.name],
+        "is_blocked_by": [blocking_child1.name, blocking_child2.name],
+    }
 
     parent_response = client.post(app.url_path_for("create_task"), json=payload)
 
     assert parent_response.status_code == 201
     assert child1.name in parent_response.json()["depends_on"]
     assert child2.name in parent_response.json()["depends_on"]
+    assert blocking_child1.name in parent_response.json()["is_blocked_by"]
+    assert blocking_child1.name in parent_response.json()["is_blocked_by"]
 
     parent_node = Task.nodes.get(name=parent_response.json()["name"])
     assert child1 in parent_node.depends_on.all()
     assert child2 in parent_node.depends_on.all()
+    assert blocking_child1 in parent_node.is_blocked_by.all()
+    assert blocking_child2 in parent_node.is_blocked_by.all()
 
 
 exception_text = "test excpetion"
