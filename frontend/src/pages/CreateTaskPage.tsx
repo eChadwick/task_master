@@ -104,7 +104,7 @@ export function CreateTaskPage() {
         <DualListBox
           title="Task is part of:"
           availableLabel="Available Tasks"
-          selectedLabel="Selected Parents"
+          selectedLabel="Selected Tasks"
           availableItems={unselectedParents.map(t => t.name)}
           selectedItems={selectedParents}
           highlightedAvailable={highlightParentAvail}
@@ -127,7 +127,7 @@ export function CreateTaskPage() {
         <DualListBox
           title="Task depends on:"
           availableLabel="Available Tasks"
-          selectedLabel="Selected Children"
+          selectedLabel="Selected Tasks"
           availableItems={unselectedChildren.map(t => t.name)}
           selectedItems={selectedChildren}
           highlightedAvailable={highlightChildAvail}
