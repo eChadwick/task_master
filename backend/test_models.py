@@ -32,56 +32,55 @@ def test_create_task_success():
 def test_create_duplicate_task_is_400():
     payload = {"name": "Duplicate Task Target"}
 
-    first_response = client.post(app.url_path_for('create_task'), json=payload)
+    first_response = client.post(app.url_path_for("create_task"), json=payload)
     assert first_response.status_code == 201
 
-    second_response = client.post(app.url_path_for('create_task'), json=payload)
+    second_response = client.post(app.url_path_for("create_task"), json=payload)
 
     assert second_response.status_code == 400
     assert second_response.json()["detail"] == TaskErrors.DUPLICATE_NAME
 
-def test_task_create_with_parent():
-    parent1 = Task(name='parent1').save()
-    parent2 = Task(name='parent2').save()
-    payload = {
-        'name': 'child',
-        'is_part_of': [parent1.name, parent2.name]
-    }
-    child_response = client.post(app.url_path_for('create_task'), json=payload)
-    
-    assert child_response.status_code == 201
-    assert parent1.name in child_response.json()['is_part_of']
-    assert parent2.name in child_response.json()['is_part_of']
 
-    child_node = Task.nodes.get(name=child_response.json()['name'])
+def test_task_create_with_parent():
+    parent1 = Task(name="parent1").save()
+    parent2 = Task(name="parent2").save()
+    payload = {"name": "child", "is_part_of": [parent1.name, parent2.name]}
+    child_response = client.post(app.url_path_for("create_task"), json=payload)
+
+    assert child_response.status_code == 201
+    assert parent1.name in child_response.json()["is_part_of"]
+    assert parent2.name in child_response.json()["is_part_of"]
+
+    child_node = Task.nodes.get(name=child_response.json()["name"])
     assert parent1 in child_node.is_part_of.all()
     assert parent2 in child_node.is_part_of.all()
 
-def test_task_create_with_children():
-    child1 = Task(name='child1').save()
-    child2 = Task(name='child2').save()
-    payload = {
-        'name': 'parent_task',
-        'children': [child1.name, child2.name]
-    }
-    
-    parent_response = client.post(app.url_path_for('create_task'), json=payload)
-    
-    assert parent_response.status_code == 201
-    assert child1.name in parent_response.json()['children']
-    assert child2.name in parent_response.json()['children']
 
-    parent_node = Task.nodes.get(name=parent_response.json()['name'])
+def test_task_create_with_children():
+    child1 = Task(name="child1").save()
+    child2 = Task(name="child2").save()
+    payload = {"name": "parent_task", "children": [child1.name, child2.name]}
+
+    parent_response = client.post(app.url_path_for("create_task"), json=payload)
+
+    assert parent_response.status_code == 201
+    assert child1.name in parent_response.json()["children"]
+    assert child2.name in parent_response.json()["children"]
+
+    parent_node = Task.nodes.get(name=parent_response.json()["name"])
     assert child1 in parent_node.children.all()
     assert child2 in parent_node.children.all()
 
-exception_text = 'test excpetion'
-@patch('routes.Task', side_effect=TypeError(exception_text))
+
+exception_text = "test excpetion"
+
+
+@patch("routes.Task", side_effect=TypeError(exception_text))
 def test_unspecial_error_are_passed_through(_):
     payload = {"name": "test task"}
     response = client.post(app.url_path_for("create_task"), json=payload)
     assert response.status_code == 500
-    assert response.json()['detail'] == exception_text
+    assert response.json()["detail"] == exception_text
 
 
 def test_get_single_task_success():
@@ -90,15 +89,19 @@ def test_get_single_task_success():
 
     child_name = "Child Task"
     child_task = Task(name=child_name).save()
-    
+
     target_name = "Target Task"
     target_details = "Target details"
     target_deadline = datetime.now()
-    target_task = Task(name=target_name, details=target_details, deadline=target_deadline).save()
+    target_task = Task(
+        name=target_name, details=target_details, deadline=target_deadline
+    ).save()
     target_task.is_part_of.connect(parent_task)
     target_task.children.connect(child_task)
 
-    response = client.get(app.url_path_for('get_single_task', task_name=target_task.name))
+    response = client.get(
+        app.url_path_for("get_single_task", task_name=target_task.name)
+    )
 
     assert response.status_code == 200
     data = response.json()
@@ -113,34 +116,37 @@ def test_get_single_task_not_found():
     not_real_task_name = "Non Existent Task"
     expected_error_detail = "Task not found"
 
-    response = client.get(app.url_path_for('get_single_task', task_name=not_real_task_name))
+    response = client.get(
+        app.url_path_for("get_single_task", task_name=not_real_task_name)
+    )
 
     assert response.status_code == 404
     assert response.json()["detail"] == expected_error_detail
+
 
 def test_get_all_tasks():
     parent_task = Task(name="Parent Task").save()
     child_task = Task(name="Child Task").save()
     parent_task.children.connect(child_task)
-    
+
     expected_edge_id = f"{parent_task.name}->{child_task.name}"
     response = client.get(app.url_path_for("get_tasks"))
 
     assert response.status_code == 200
     data = response.json()
-    
+
     nodes = data["nodes"]
     edges = data["edges"]
-    
+
     parent_node = next((n for n in nodes if n["id"] == parent_task.name), None)
     child_node = next((n for n in nodes if n["id"] == child_task.name), None)
-    
+
     assert parent_node is not None
     assert parent_node["name"] == parent_task.name
-    
+
     assert child_node is not None
     assert child_node["name"] == child_task.name
-    
+
     assert len(edges) == 1
     assert edges[0]["id"] == expected_edge_id
     assert edges[0]["source"] == parent_task.name

@@ -9,6 +9,7 @@ from error_messages import TaskErrors
 
 router = APIRouter(prefix="/api")
 
+
 class TaskCreateRequest(BaseModel):
     name: str
     details: Optional[str] = None
@@ -16,10 +17,13 @@ class TaskCreateRequest(BaseModel):
     is_part_of: List[str] = []
     children: List[str] = []
 
+
 @router.post("/tasks", status_code=201)
 def create_task(payload: TaskCreateRequest):
     try:
-        new_task = Task(name=payload.name, details=payload.details, deadline=payload.deadline).save()
+        new_task = Task(
+            name=payload.name, details=payload.details, deadline=payload.deadline
+        ).save()
         for parent_name in payload.is_part_of:
             parent_node = Task.nodes.get_or_none(name=parent_name)
             if parent_node:
@@ -32,7 +36,7 @@ def create_task(payload: TaskCreateRequest):
         raise HTTPException(status_code=400, detail=TaskErrors.DUPLICATE_NAME)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-        
+
     return {
         "id": new_task.element_id,
         "name": new_task.name,
@@ -40,44 +44,44 @@ def create_task(payload: TaskCreateRequest):
         "deadline": new_task.deadline,
         "is_part_of": [task.name for task in new_task.is_part_of.all()],
         "children": [child.name for child in new_task.children.all()],
-        "status": "Saved to DB!"
+        "status": "Saved to DB!",
     }
+
 
 @router.get("/tasks/{task_name}")
 def get_single_task(task_name: str):
     task = Task.nodes.get_or_none(name=task_name)
-    
+
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
-        
+
     return {
         "name": task.name,
         "details": task.details,
         "deadline": task.deadline,
         "is_part_of": [task.name for task in task.is_part_of.all()],
-        "children": [child.name for child in task.children.all()]
+        "children": [child.name for child in task.children.all()],
     }
+
 
 @router.get("/tasks")
 def get_tasks():
     all_tasks = Task.nodes.all()
-    
+
     nodes = [
-        {
-            "id": task.name, 
-            "name": task.name,
-            "details": task.details
-        }
+        {"id": task.name, "name": task.name, "details": task.details}
         for task in all_tasks
     ]
-    
+
     edges = []
     for task in all_tasks:
         for child in task.children.all():
-            edges.append({
-                "id": f"{task.name}->{child.name}",
-                "source": task.name,
-                "target": child.name
-            })
-            
+            edges.append(
+                {
+                    "id": f"{task.name}->{child.name}",
+                    "source": task.name,
+                    "target": child.name,
+                }
+            )
+
     return {"nodes": nodes, "edges": edges}

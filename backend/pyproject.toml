@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "black>=26.5.1",
     "fastapi>=0.136.1",
     "ipdb>=0.13.13",
     "neomodel>=6.1.0",

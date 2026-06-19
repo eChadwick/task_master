@@ -4,7 +4,7 @@ from neomodel import (
     get_config,
     DateProperty,
     RelationshipTo,
-    RelationshipFrom
+    RelationshipFrom,
 )
 
 from config import settings
@@ -16,5 +16,5 @@ class Task(StructuredNode):
     name = StringProperty(unique_index=True, required=True)
     details = StringProperty(required=False)
     deadline = DateProperty(required=False)
-    is_part_of = RelationshipFrom('Task', 'DEPENDS_ON')
-    children = RelationshipTo('Task', 'DEPENDS_ON')
+    is_part_of = RelationshipFrom("Task", "DEPENDS_ON")
+    children = RelationshipTo("Task", "DEPENDS_ON")
