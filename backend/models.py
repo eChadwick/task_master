@@ -18,5 +18,5 @@ class Task(StructuredNode):
     deadline = DateProperty(required=False)
     is_part_of = RelationshipFrom("Task", "DEPENDS_ON")
     depends_on = RelationshipTo("Task", "DEPENDS_ON")
-    blocks = RelationshipFrom("Task", "BLOCKS")
-    is_blocked_by = RelationshipTo("Task", "BLOCKS")
+    blocks = RelationshipFrom("Task", "IS_BLOCKED_BY")
+    is_blocked_by = RelationshipTo("Task", "IS_BLOCKED_BY")

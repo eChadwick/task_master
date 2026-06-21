@@ -11,6 +11,8 @@ export interface Task {
 export interface CreateTaskPayload extends Task {
   is_part_of: string[];
   depends_on: string[];
+  blocks: string[];
+  is_blocked_by: string[]
 }
 
 export const taskApi = {

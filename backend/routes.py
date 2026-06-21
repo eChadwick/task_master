@@ -73,6 +73,8 @@ def get_single_task(task_name: str):
         "deadline": task.deadline,
         "is_part_of": [task.name for task in task.is_part_of.all()],
         "depends_on": [task.name for task in task.depends_on.all()],
+        "blocks": [task.name for task in task.blocks.all()],
+        "is_blocked_by": [task.name for task in task.is_blocked_by.all()],
     }
 
 

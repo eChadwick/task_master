@@ -5,8 +5,10 @@ interface TaskData {
   name: string;
   details: string | null;
   deadline: string | null;
-  parents: string[];
-  children: string[];
+  is_part_of: string[];
+  depends_on: string[];
+  blocks: string[];
+  is_blocked_by: string[];
 }
 
 export function ViewTaskPage() {
@@ -52,6 +54,28 @@ export function ViewTaskPage() {
           {task.depends_on.map((c) => (
             <li key={c}>
               <Link to={`/tasks/${encodeURIComponent(c)}`}>{c}</Link>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <h3>Blocks:</h3>
+      {task.blocks.length === 0 ? <p className="no-tasks">None</p> : (
+        <ul className="task-link-list">
+          {task.blocks.map((b) => (
+            <li key={b}>
+              <Link to={`/tasks/${encodeURIComponent(b)}`}>{b}</Link>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <h3>Is Blocked By:</h3>
+      {task.is_blocked_by.length === 0 ? <p className="no-tasks">None</p> : (
+        <ul className="task-link-list">
+          {task.is_blocked_by.map((bb) => (
+            <li key={bb}>
+              <Link to={`/tasks/${encodeURIComponent(bb)}`}>{bb}</Link>
             </li>
           ))}
         </ul>
