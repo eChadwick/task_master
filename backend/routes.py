@@ -1,10 +1,10 @@
+from enum import Enum, auto
 from fastapi import APIRouter, HTTPException, Response
 from neomodel.exceptions import UniqueProperty
 from models import Task
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import date
-
 from error_messages import TaskErrors
 
 router = APIRouter(prefix="/api")
@@ -78,6 +78,11 @@ def get_single_task(task_name: str):
     }
 
 
+class EdgeType(Enum):
+    BLOCKING = auto()
+    NON_BLOCKING = auto()
+
+
 @router.get("/tasks")
 def get_tasks():
     all_tasks = Task.nodes.all()
@@ -95,6 +100,16 @@ def get_tasks():
                     "id": f"{task.name}->{child.name}",
                     "source": task.name,
                     "target": child.name,
+                    "type": EdgeType.NON_BLOCKING,
+                }
+            )
+        for child in task.is_blocked_by.all():
+            edges.append(
+                {
+                    "id": f"{task.name}->{child.name}",
+                    "source": task.name,
+                    "target": child.name,
+                    "type": EdgeType.BLOCKING,
                 }
             )
 

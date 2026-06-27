@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from main import app
 from models import Task
 import pytest
+from routes import EdgeType
 from unittest.mock import patch
 
 client = TestClient(app)
@@ -147,9 +148,12 @@ def test_get_single_task_not_found():
 def test_get_all_tasks():
     parent_task = Task(name="Parent Task").save()
     child_task = Task(name="Child Task").save()
+    blocking_child_task = Task(name="Blocking Child").save()
     parent_task.depends_on.connect(child_task)
+    parent_task.is_blocked_by.connect(blocking_child_task)
 
     expected_edge_id = f"{parent_task.name}->{child_task.name}"
+    expected_blocking_edge_id = f"{parent_task.name}->{blocking_child_task.name}"
     response = client.get(app.url_path_for("get_tasks"))
 
     assert response.status_code == 200
@@ -160,6 +164,9 @@ def test_get_all_tasks():
 
     parent_node = next((n for n in nodes if n["id"] == parent_task.name), None)
     child_node = next((n for n in nodes if n["id"] == child_task.name), None)
+    blocking_child_node = next(
+        (n for n in nodes if n["id"] == blocking_child_task.name), None
+    )
 
     assert parent_node is not None
     assert parent_node["name"] == parent_task.name
@@ -167,10 +174,20 @@ def test_get_all_tasks():
     assert child_node is not None
     assert child_node["name"] == child_task.name
 
-    assert len(edges) == 1
+    assert blocking_child_node is not None
+    assert blocking_child_node["name"] == blocking_child_task.name
+
+    assert len(edges) == 2
+
     assert edges[0]["id"] == expected_edge_id
     assert edges[0]["source"] == parent_task.name
     assert edges[0]["target"] == child_task.name
+    assert edges[0]["type"] == EdgeType.NON_BLOCKING.value
+
+    assert edges[1]["id"] == expected_blocking_edge_id
+    assert edges[1]["source"] == parent_task.name
+    assert edges[1]["target"] == blocking_child_task.name
+    assert edges[1]["type"] == EdgeType.BLOCKING.value
 
 
 def test_get_tasks_empty_database():
