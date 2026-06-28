@@ -27,17 +27,11 @@ interface FlowEdge {
   id: string;
   source: string;
   target: string;
-  style: React.CSSProperties;
+  className?: string; // Replaced raw inline styles with a dynamic class name assignment
   markerEnd?: {
     type: MarkerType;
-    color?: string;
   };
 }
-
-// Clean, standard configuration object for global edge styles
-const edgeOptions = {
-  style: { stroke: '#999', strokeWidth: 2 },
-};
 
 export function ViewAllTasksPage() {
   const navigate = useNavigate();
@@ -60,23 +54,16 @@ export function ViewAllTasksPage() {
           className: 'task-graph-node'
         }));
 
-        const mappedEdges = data.edges.map((edge) => {
-          const edgeColor = edge.type === 'blocking' ? '#dc2626' : '#115e59';
-
-          return {
-            id: edge.id,
-            source: edge.source,
-            target: edge.target,
-            style: {
-              stroke: edgeColor,
-              color: edgeColor
-            },
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              color: edgeColor,
-            }
-          };
-        });
+        const mappedEdges = data.edges.map((edge) => ({
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          // Applies semantic CSS classes directly to the edge elements instead of JS style injection
+          className: edge.type === 'blocking' ? 'task-edge-blocking' : 'task-edge-depends',
+          markerEnd: {
+            type: MarkerType.ArrowClosed
+          }
+        }));
 
         setNodes(mappedNodes);
         setEdges(mappedEdges);
@@ -102,7 +89,6 @@ export function ViewAllTasksPage() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          defaultEdgeOptions={edgeOptions} // Natively applies styles to lines
           onNodeClick={handleNodeClick}
           fitView
           nodesConnectable={false}
