@@ -13,6 +13,7 @@ interface BackendEdge {
   id: string;
   source: string;
   target: string;
+  type: string;
 }
 
 interface FlowNode {
@@ -26,6 +27,7 @@ interface FlowEdge {
   id: string;
   source: string;
   target: string;
+  style: React.CSSProperties;
   markerEnd?: {
     type: MarkerType;
     color?: string;
@@ -58,18 +60,26 @@ export function ViewAllTasksPage() {
           className: 'task-graph-node'
         }));
 
-        const mappedEdges = data.edges.map((edge) => ({
-          id: edge.id,
-          source: edge.source,
-          target: edge.target,
-          markerEnd: {
-            type: MarkerType.ArrowClosed,
-            color: '#999',
-          }
-        }));
+        const mappedEdges = data.edges.map((edge) => {
+          const edgeColor = edge.type === 'blocking' ? '#dc2626' : '#115e59';
+
+          return {
+            id: edge.id,
+            source: edge.source,
+            target: edge.target,
+            style: {
+              stroke: edgeColor,
+              color: edgeColor
+            },
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              color: edgeColor,
+            }
+          };
+        });
 
         setNodes(mappedNodes);
-        setEdges(mappedEdges); 
+        setEdges(mappedEdges);
         setLoading(false);
       })
       .catch((err) => {
@@ -89,9 +99,9 @@ export function ViewAllTasksPage() {
     <div className="task-view-container graph-container-viewport">
       <h1>All Tasks</h1>
       <div className="graph-canvas-frame">
-        <ReactFlow 
-          nodes={nodes} 
-          edges={edges} 
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
           defaultEdgeOptions={edgeOptions} // Natively applies styles to lines
           onNodeClick={handleNodeClick}
           fitView

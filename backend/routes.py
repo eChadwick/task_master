@@ -79,8 +79,8 @@ def get_single_task(task_name: str):
 
 
 class EdgeType(Enum):
-    BLOCKING = auto()
-    NON_BLOCKING = auto()
+    BLOCKING = "blocking"
+    NON_BLOCKING = "non_blocking"
 
 
 @router.get("/tasks")
