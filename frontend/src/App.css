@@ -1,372 +1,215 @@
-/* Core Layout Wrapper */
-.app-container {
-  padding: 40px;
-  font-family: sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+/* -------------------------------------------------------------
+   DESIGN SYSTEM TOKENS (CSS Variables)
+   ------------------------------------------------------------- */
+:root {
+  /* Brand & UI Accents */
+  --color-text-dark: #1e293b;
+  --color-text-light: #f8fafc;
+  --color-link: #0066cc;
+  --color-link-hover: #004499;
+  --color-accent-blue: #38bdf8;
+  --color-border-muted: #ccc;
 
-/* Form Styles */
-.task-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.task-input {
-  padding: 8px;
-  width: 250px;
-  box-sizing: border-box;
-}
-
-.form-title {
-  margin-top: 15px;
-  margin-bottom: 5px;
-}
-
-/* Dual List Picker Layout */
-.picker-container {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.list-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.list-label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 5px;
-}
-
-.task-select {
-  width: 200px;
-  height: 120px;
-  padding: 5px;
-}
-
-/* Middle Buttons */
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.action-btn {
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-/* Form Submit Button */
-.submit-btn {
-  padding: 8px 16px;
-  cursor: pointer;
-}
-
-/* Feedback Message */
-.status-message {
-  margin-top: 20px;
-  color: green;
-}
-
-.task-view-container {
-  padding: 20px;
-  font-family: sans-serif;
-}
-
-.task-view-error {
-  padding: 20px;
-  color: red;
-  font-weight: bold;
-}
-
-.task-view-loading {
-  padding: 20px;
-  color: #666;
-}
-
-/* Strips out ugly defaults from the lists */
-.task-link-list {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0;
-}
-
-/* Spaces out the list rows cleanly */
-.task-link-list li {
-  margin-bottom: 8px;
-}
-
-/* Flat style: pure typography link layout */
-.task-link-list a {
-  color: #0066cc;
-  text-decoration: none;
-  font-weight: 500;
-  border-bottom: 1px solid transparent;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-
-/* Crisp interactive text line on hover */
-.task-link-list a:hover {
-  color: #004499;
-  border-bottom-color: #004499;
-}
-
-.no-tasks {
-  color: #888;
-  font-style: italic;
-}
-
-/* The outer viewport containers */
-.graph-container-viewport {
-  width: 100%;
-  height: 80vh;
-}
-
-.graph-canvas-frame {
-  width: 100%;
-  height: 100%;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-/* Upgraded high-contrast task nodes */
-.task-graph-node {
-  background: #1e293b;
-  /* Deep slate/midnight blue */
-  color: #f8fafc;
-  /* Crisp, bright off-white text */
-  border: 2px solid #334155;
-  /* Subtle dark border */
-  border-radius: 8px;
-  padding: 12px 18px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: 0.3px;
-  cursor: pointer;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Eye-catching electric hover highlight */
-.task-graph-node:hover {
-  background: #0f172a;
-  /* Darkens slightly on focus */
-  border-color: #38bdf8;
-  /* Vibrant electric sky-blue glow */
-  transform: translateY(-2px);
-  /* Subtle physics lift */
-  box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.2), 0 4px 6px -2px rgba(56, 189, 248, 0.1);
-}
-
-/* Make the connecting edge lines pop out */
-.react-flow__edge-path {
-  stroke-width: 2.5 !important;
-  /* Slightly heavier weight so they stand out */
-}
-
-/* Style the internal connection dot anchors on the nodes to match */
-.react-flow__handle {
-  background: #38bdf8 !important;
-  width: 6px !important;
-  height: 6px !important;
-  border: none !important;
-}
-
-/* Core Layout Wrapper */
-.app-container {
-  padding: 40px;
-  font-family: sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Form Styles */
-.task-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.task-input {
-  padding: 8px;
-  width: 250px;
-  box-sizing: border-box;
-}
-
-.form-title {
-  margin-top: 15px;
-  margin-bottom: 5px;
-}
-
-/* Dual List Picker Layout */
-.picker-container {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.list-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.list-label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 5px;
-}
-
-.task-select {
-  width: 200px;
-  height: 120px;
-  padding: 5px;
-}
-
-/* Middle Buttons */
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.action-btn {
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-/* Form Submit Button */
-.submit-btn {
-  padding: 8px 16px;
-  cursor: pointer;
-}
-
-/* Feedback Message */
-.status-message {
-  margin-top: 20px;
-  color: green;
-}
-
-.task-view-container {
-  padding: 20px;
-  font-family: sans-serif;
-}
-
-.task-view-error {
-  padding: 20px;
-  color: red;
-  font-weight: bold;
-}
-
-.task-view-loading {
-  padding: 20px;
-  color: #666;
-}
-
-/* Strips out ugly defaults from the lists */
-.task-link-list {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0;
-}
-
-/* Spaces out the list rows cleanly */
-.task-link-list li {
-  margin-bottom: 8px;
-}
-
-/* Flat style: pure typography link layout */
-.task-link-list a {
-  color: #0066cc;
-  text-decoration: none;
-  font-weight: 500;
-  border-bottom: 1px solid transparent;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-
-/* Crisp interactive text line on hover */
-.task-link-list a:hover {
-  color: #004499;
-  border-bottom-color: #004499;
-}
-
-.no-tasks {
-  color: #888;
-  font-style: italic;
-}
-
-/* The outer viewport containers */
-.graph-container-viewport {
-  width: 100%;
-  height: 80vh;
-}
-
-.graph-canvas-frame {
-  width: 100%;
-  height: 100%;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-/* Upgraded high-contrast task nodes */
-.task-graph-node {
-  background: #1e293b;
-  color: #f8fafc;
-  border: 2px solid #334155;
-  border-radius: 8px;
-  padding: 12px 18px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: 0.3px;
-  cursor: pointer;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.task-graph-node:hover {
-  background: #0f172a;
-  border-color: #38bdf8;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.2), 0 4px 6px -2px rgba(56, 189, 248, 0.1);
-}
-
-/* Style the internal connection dot anchors on the nodes to match */
-.react-flow__handle {
-  background: #38bdf8 !important;
-  width: 6px !important;
-  height: 6px !important;
-  border: none !important;
+  /* Semantic Edge States */
+  --color-edge-depends: #115e59;
+  /* Deep Teal */
+  --color-edge-blocking: #dc2626;
+  /* Crimson Red */
 }
 
 /* -------------------------------------------------------------
-   NEW EXTRACTED EDGE STYLES (Overrides React Flow SVG Engines)
+   CORE LAYOUT & GLOBAL STYLES
    ------------------------------------------------------------- */
+.app-container,
+.task-view-container {
+  font-family: sans-serif;
+  padding: 40px;
+}
 
-/* Standard Depend-On Edges (Deep Teal) */
-.task-edge-depends .react-flow__edge-path {
-  stroke: #115e59 !important;
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.task-view-container {
+  padding: 20px;
+}
+
+/* -------------------------------------------------------------
+   FORM & INTERACTIVE PICKER COMPONENTS
+   ------------------------------------------------------------- */
+.task-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.task-input {
+  padding: 8px;
+  width: 250px;
+  box-sizing: border-box;
+}
+
+.form-title {
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+.picker-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.list-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.task-select {
+  width: 200px;
+  height: 120px;
+  padding: 5px;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.action-btn,
+.submit-btn {
+  cursor: pointer;
+}
+
+.action-btn {
+  padding: 5px 10px;
+}
+
+.submit-btn {
+  padding: 8px 16px;
+}
+
+/* -------------------------------------------------------------
+   STATUSES & TYPOGRAPHY LINKS
+   ------------------------------------------------------------- */
+.status-message {
+  margin-top: 20px;
+  color: green;
+}
+
+.task-view-error {
+  padding: 20px;
+  color: red;
+  font-weight: bold;
+}
+
+.task-view-loading {
+  padding: 20px;
+  color: #666;
+}
+
+.no-tasks {
+  color: #888;
+  font-style: italic;
+}
+
+.task-link-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.task-link-list li {
+  margin-bottom: 8px;
+}
+
+.task-link-list a {
+  color: var(--color-link);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.task-link-list a:hover {
+  color: var(--color-link-hover);
+  border-bottom-color: var(--color-link-hover);
+}
+
+/* -------------------------------------------------------------
+   GRAPH CANVAS & NODE VIEWPORTS
+   ------------------------------------------------------------- */
+.graph-container-viewport {
+  width: 100%;
+  height: 80vh;
+}
+
+.graph-canvas-frame {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--color-border-muted);
+  border-radius: 8px;
+}
+
+.task-graph-node {
+  background: var(--color-text-dark);
+  color: var(--color-text-light);
+  border: 2px solid #334155;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.task-graph-node:hover {
+  background: #0f172a;
+  border-color: var(--color-accent-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.2), 0 4px 6px -2px rgba(56, 189, 248, 0.1);
+}
+
+/* -------------------------------------------------------------
+   REACT FLOW LIBRARY OVERRIDES
+   ------------------------------------------------------------- */
+.react-flow__edge-path {
   stroke-width: 2.5 !important;
+}
+
+.react-flow__handle {
+  background: var(--color-accent-blue) !important;
+  width: 6px !important;
+  height: 6px !important;
+  border: none !important;
+}
+
+/* Semantic Edge Custom Clashes */
+.task-edge-depends .react-flow__edge-path {
+  stroke: var(--color-edge-depends) !important;
 }
 
 .task-edge-depends .react-flow__marker path {
-  fill: #115e59 !important;
+  fill: var(--color-edge-depends) !important;
 }
 
-/* Hard Blocker Edges (Crimson Red) */
 .task-edge-blocking .react-flow__edge-path {
-  stroke: #dc2626 !important;
-  stroke-width: 2.5 !important;
+  stroke: var(--color-edge-blocking) !important;
 }
 
 .task-edge-blocking .react-flow__marker path {
-  fill: #dc2626 !important;
+  fill: var(--color-edge-blocking) !important;
 }
