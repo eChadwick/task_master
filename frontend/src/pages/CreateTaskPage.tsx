@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { taskApi, type Task } from '../services/api';
 import { DualListBox } from '../components/DualListBox';
 
@@ -129,96 +129,112 @@ export function CreateTaskPage() {
         />
 
         {/* Parent Relationship List Block */}
-        <DualListBox
-          title="Task is part of:"
-          availableLabel="Available Tasks"
-          selectedLabel="Selected Tasks"
-          availableItems={unselectedParents.map(t => t.name)}
-          selectedItems={selectedParents}
-          highlightedAvailable={highlightParentAvail}
-          highlightedSelected={highlightParentSel}
-          onHighlightAvailable={setHighlightParentAvail}
-          onHighlightSelected={setHighlightParentSel}
-          onAdd={() => {
-            if (!highlightParentAvail) return;
-            setSelectedParents(prev => [...prev, highlightParentAvail]);
-            setHighlightParentAvail('');
-          }}
-          onRemove={() => {
-            if (!highlightParentSel) return;
-            setSelectedParents(prev => prev.filter(n => n !== highlightParentSel));
-            setHighlightParentSel('');
-          }}
-        />
+        <details className="relationship-disclosure">
+          <summary className="disclosure-summary">Task is part of:</summary>
+          <div className="disclosure-content">
+            <DualListBox
+              availableLabel="Available Tasks"
+              selectedLabel="Selected Tasks"
+              availableItems={unselectedParents.map(t => t.name)}
+              selectedItems={selectedParents}
+              highlightedAvailable={highlightParentAvail}
+              highlightedSelected={highlightParentSel}
+              onHighlightAvailable={setHighlightParentAvail}
+              onHighlightSelected={setHighlightParentSel}
+              onAdd={() => {
+                if (!highlightParentAvail) return;
+                setSelectedParents(prev => [...prev, highlightParentAvail]);
+                setHighlightParentAvail('');
+              }}
+              onRemove={() => {
+                if (!highlightParentSel) return;
+                setSelectedParents(prev => prev.filter(n => n !== highlightParentSel));
+                setHighlightParentSel('');
+              }}
+            />
+          </div>
+        </details>
 
         {/* Children Relationship List Block */}
-        <DualListBox
-          title="Task depends on:"
-          availableLabel="Available Tasks"
-          selectedLabel="Selected Tasks"
-          availableItems={unselectedChildren.map(t => t.name)}
-          selectedItems={selectedChildren}
-          highlightedAvailable={highlightChildAvail}
-          highlightedSelected={highlightChildSel}
-          onHighlightAvailable={setHighlightChildAvail}
-          onHighlightSelected={setHighlightChildSel}
-          onAdd={() => {
-            if (!highlightChildAvail) return;
-            setSelectedChildren(prev => [...prev, highlightChildAvail]);
-            setHighlightChildAvail('');
-          }}
-          onRemove={() => {
-            if (!highlightChildSel) return;
-            setSelectedChildren(prev => prev.filter(n => n !== highlightChildSel));
-            setHighlightChildSel('');
-          }}
-        />
+        <details className="relationship-disclosure">
+          <summary className="disclosure-summary">Task depends on:</summary>
+          <div className="disclosure-content">
+            <DualListBox
+              availableLabel="Available Tasks"
+              selectedLabel="Selected Tasks"
+              availableItems={unselectedChildren.map(t => t.name)}
+              selectedItems={selectedChildren}
+              highlightedAvailable={highlightChildAvail}
+              highlightedSelected={highlightChildSel}
+              onHighlightAvailable={setHighlightChildAvail}
+              onHighlightSelected={setHighlightChildSel}
+              onAdd={() => {
+                if (!highlightChildAvail) return;
+                setSelectedChildren(prev => [...prev, highlightChildAvail]);
+                setHighlightChildAvail('');
+              }}
+              onRemove={() => {
+                if (!highlightChildSel) return;
+                setSelectedChildren(prev => prev.filter(n => n !== highlightChildSel));
+                setHighlightChildSel('');
+              }}
+            />
+          </div>
+        </details>
 
         {/* Blocks Relationship List Block */}
-        <DualListBox
-          title="Task blocks:"
-          availableLabel="Available Tasks"
-          selectedLabel="Selected Tasks"
-          availableItems={unselectedBlocks.map(t => t.name)}
-          selectedItems={selectedBlocks}
-          highlightedAvailable={highlightBlocksAvail}
-          highlightedSelected={highlightBlocksSel}
-          onHighlightAvailable={setHighlightBlocksAvail}
-          onHighlightSelected={setHighlightBlocksSel}
-          onAdd={() => {
-            if (!highlightBlocksAvail) return;
-            setSelectedBlocks(prev => [...prev, highlightBlocksAvail]);
-            setHighlightBlocksAvail('');
-          }}
-          onRemove={() => {
-            if (!highlightBlocksSel) return;
-            setSelectedBlocks(prev => prev.filter(n => n !== highlightBlocksSel));
-            setHighlightBlocksSel('');
-          }}
-        />
+        <details className="relationship-disclosure">
+          <summary className="disclosure-summary">Task blocks:</summary>
+          <div className="disclosure-content">
+            <DualListBox
+              availableLabel="Available Tasks"
+              selectedLabel="Selected Tasks"
+              availableItems={unselectedBlocks.map(t => t.name)}
+              selectedItems={selectedBlocks}
+              highlightedAvailable={highlightBlocksAvail}
+              highlightedSelected={highlightBlocksSel}
+              onHighlightAvailable={setHighlightBlocksAvail}
+              onHighlightSelected={setHighlightBlocksSel}
+              onAdd={() => {
+                if (!highlightBlocksAvail) return;
+                setSelectedBlocks(prev => [...prev, highlightBlocksAvail]);
+                setHighlightBlocksAvail('');
+              }}
+              onRemove={() => {
+                if (!highlightBlocksSel) return;
+                setSelectedBlocks(prev => prev.filter(n => n !== highlightBlocksSel));
+                setHighlightBlocksSel('');
+              }}
+            />
+          </div>
+        </details>
 
         {/* Is Blocked By Relationship List Block */}
-        <DualListBox
-          title="Task is blocked by:"
-          availableLabel="Available Tasks"
-          selectedLabel="Selected Tasks"
-          availableItems={unselectedBlockedBy.map(t => t.name)}
-          selectedItems={selectedBlockedBy}
-          highlightedAvailable={highlightBlockedByAvail}
-          highlightedSelected={highlightBlockedBySel}
-          onHighlightAvailable={setHighlightBlockedByAvail}
-          onHighlightSelected={setHighlightBlockedBySel}
-          onAdd={() => {
-            if (!highlightBlockedByAvail) return;
-            setSelectedBlockedBy(prev => [...prev, highlightBlockedByAvail]);
-            setHighlightBlockedByAvail('');
-          }}
-          onRemove={() => {
-            if (!highlightBlockedBySel) return;
-            setSelectedBlockedBy(prev => prev.filter(n => n !== highlightBlockedBySel));
-            setHighlightBlockedBySel('');
-          }}
-        />
+        <details className="relationship-disclosure">
+          <summary className="disclosure-summary">Task is blocked by:</summary>
+          <div className="disclosure-content">
+            <DualListBox
+              availableLabel="Available Tasks"
+              selectedLabel="Selected Tasks"
+              availableItems={unselectedBlockedBy.map(t => t.name)}
+              selectedItems={selectedBlockedBy}
+              highlightedAvailable={highlightBlockedByAvail}
+              highlightedSelected={highlightBlockedBySel}
+              onHighlightAvailable={setHighlightBlockedByAvail}
+              onHighlightSelected={setHighlightBlockedBySel}
+              onAdd={() => {
+                if (!highlightBlockedByAvail) return;
+                setSelectedBlockedBy(prev => [...prev, highlightBlockedByAvail]);
+                setHighlightBlockedByAvail('');
+              }}
+              onRemove={() => {
+                if (!highlightBlockedBySel) return;
+                setSelectedBlockedBy(prev => prev.filter(n => n !== highlightBlockedBySel));
+                setHighlightBlockedBySel('');
+              }}
+            />
+          </div>
+        </details>
 
         <button type="submit" className="submit-btn">Save to Graph</button>
       </form>
