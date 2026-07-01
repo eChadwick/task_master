@@ -42,6 +42,16 @@ def test_create_duplicate_task_is_400():
     assert second_response.json()["detail"] == TaskErrors.DUPLICATE_NAME
 
 
+def test_case_insensitive_uniqeness_for_task_names():
+    Task(name="Test Task").save()
+
+    payload = {"name": "test TASK"}
+    response = client.post(app.url_path_for("create_task"), json=payload)
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == TaskErrors.DUPLICATE_NAME
+
+
 def test_task_create_with_parent():
     parent1 = Task(name="parent1").save()
     parent2 = Task(name="parent2").save()

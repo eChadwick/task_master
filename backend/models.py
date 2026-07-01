@@ -6,6 +6,7 @@ from neomodel import (
     RelationshipTo,
     RelationshipFrom,
 )
+from neomodel.exceptions import UniqueProperty
 
 from config import settings
 
@@ -20,3 +21,10 @@ class Task(StructuredNode):
     depends_on = RelationshipTo("Task", "DEPENDS_ON")
     blocks = RelationshipFrom("Task", "IS_BLOCKED_BY")
     is_blocked_by = RelationshipTo("Task", "IS_BLOCKED_BY")
+
+    def save(self):
+        duplicate = Task.nodes.filter(name__regex=f"(?i)^{self.name}$").all()
+        if duplicate:
+            raise UniqueProperty("")
+
+        return super().save()
