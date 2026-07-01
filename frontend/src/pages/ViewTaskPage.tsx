@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-
-interface TaskData {
-  name: string;
-  details: string | null;
-  deadline: string | null;
-  is_part_of: string[];
-  depends_on: string[];
-  blocks: string[];
-  is_blocked_by: string[];
-}
+// 1. Import dependencies cleanly from api.ts
+import { taskApi, type TaskData } from '../services/api';
 
 export function ViewTaskPage() {
   const { task_name } = useParams<{ task_name: string }>();
@@ -19,13 +11,14 @@ export function ViewTaskPage() {
   useEffect(() => {
     if (!task_name) return;
 
-    fetch(`http://localhost:8000/api/tasks/${encodeURIComponent(task_name)}`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Task not found in database');
-        return res.json();
-      })
-      .then((data: TaskData) => setTask(data))
-      .catch((err) => setError(err.message));
+    // 2. Refactored Axios wrapper method call
+    taskApi.getByName(task_name)
+      .then((data) => setTask(data))
+      .catch((err) => {
+        // Axios errors store backend error payloads inside err.response
+        const errorMsg = err.response?.data?.detail || 'Task not found in database';
+        setError(errorMsg);
+      });
   }, [task_name]);
 
   if (error) return <div className="task-view-error">Error: {error}</div>;
