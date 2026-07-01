@@ -11,6 +11,8 @@ from neomodel.exceptions import UniqueProperty
 
 from config import settings
 
+from error_messages import TaskErrors
+
 get_config().database_url = settings.neomodel_cypher_connection_url
 
 
@@ -27,7 +29,16 @@ class Task(StructuredNode):
 
     def save(self):
         duplicate = Task.nodes.filter(name__regex=f"(?i)^{self.name}$").all()
-        if duplicate:
+        if duplicate and duplicate[0].name != self.name:
             raise UniqueProperty("")
+
+        if self.complete:
+            for child in self.depends_on:
+                if not child.complete:
+                    raise ValueError(TaskErrors.DEPENDENCY_COMPLETE_VIOLATION)
+
+            for child in self.is_blocked_by:
+                if not child.complete:
+                    raise ValueError(TaskErrors.DEPENDENCY_COMPLETE_VIOLATION)
 
         return super().save()
