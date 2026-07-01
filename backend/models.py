@@ -5,6 +5,7 @@ from neomodel import (
     DateProperty,
     RelationshipTo,
     RelationshipFrom,
+    BooleanProperty,
 )
 from neomodel.exceptions import UniqueProperty
 
@@ -17,6 +18,8 @@ class Task(StructuredNode):
     name = StringProperty(unique_index=True, required=True)
     details = StringProperty(required=False)
     deadline = DateProperty(required=False)
+    complete = BooleanProperty(default=False)
+
     is_part_of = RelationshipFrom("Task", "DEPENDS_ON")
     depends_on = RelationshipTo("Task", "DEPENDS_ON")
     blocks = RelationshipFrom("Task", "IS_BLOCKED_BY")

@@ -27,6 +27,7 @@ def test_create_task_success():
     assert response.json()["name"] == payload["name"]
     assert response.json()["details"] == payload["details"]
     assert response.json()["deadline"] == payload["deadline"]
+    assert response.json()["complete"] == False
     assert "id" in response.json()
 
 

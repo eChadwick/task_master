@@ -52,6 +52,7 @@ def create_task(payload: TaskCreateRequest):
         "name": new_task.name,
         "details": new_task.details,
         "deadline": new_task.deadline,
+        "complete": new_task.complete,
         "is_part_of": [task.name for task in new_task.is_part_of.all()],
         "depends_on": [task.name for task in new_task.depends_on.all()],
         "blocks": [task.name for task in new_task.blocks.all()],
