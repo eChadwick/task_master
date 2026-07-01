@@ -140,6 +140,7 @@ def test_get_single_task_success():
     assert data["name"] == target_name
     assert data["details"] == target_details
     assert data["deadline"] == target_deadline.strftime("%Y-%m-%d")
+    assert data["complete"] == False
     assert parent_name in data["is_part_of"]
     assert child_name in data["depends_on"]
 
@@ -181,12 +182,15 @@ def test_get_all_tasks():
 
     assert parent_node is not None
     assert parent_node["name"] == parent_task.name
+    assert parent_node["complete"] == parent_task.complete
 
     assert child_node is not None
     assert child_node["name"] == child_task.name
+    assert child_node["complete"] == child_task.complete
 
     assert blocking_child_node is not None
     assert blocking_child_node["name"] == blocking_child_task.name
+    assert blocking_child_node["complete"] == blocking_child_task.complete
 
     assert len(edges) == 2
 

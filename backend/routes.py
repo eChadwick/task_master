@@ -72,6 +72,7 @@ def get_single_task(task_name: str):
         "name": task.name,
         "details": task.details,
         "deadline": task.deadline,
+        "complete": task.complete,
         "is_part_of": [task.name for task in task.is_part_of.all()],
         "depends_on": [task.name for task in task.depends_on.all()],
         "blocks": [task.name for task in task.blocks.all()],
@@ -89,7 +90,12 @@ def get_tasks():
     all_tasks = Task.nodes.all()
 
     nodes = [
-        {"id": task.name, "name": task.name, "details": task.details}
+        {
+            "id": task.name,
+            "name": task.name,
+            "details": task.details,
+            "complete": task.complete,
+        }
         for task in all_tasks
     ]
 
