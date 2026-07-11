@@ -32,6 +32,8 @@ class Task(StructuredNode):
         if duplicate and duplicate[0].name != self.name:
             raise UniqueProperty("")
 
+        ret = super().save()
+
         if self.complete:
             for child in self.depends_on:
                 if not child.complete:
@@ -40,5 +42,8 @@ class Task(StructuredNode):
             for child in self.is_blocked_by:
                 if not child.complete:
                     raise ValueError(TaskErrors.DEPENDENCY_COMPLETE_VIOLATION)
-
-        return super().save()
+        else:
+            for parent in self.is_part_of:
+                parent.complete = False
+                parent.save()
+        return ret

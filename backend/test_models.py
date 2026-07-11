@@ -44,3 +44,21 @@ def test_task_cant_be_complete_when_is_blocked_by_are_incomplete():
     child.save()
 
     parent.save()
+
+
+def test_parent_updates_to_incomplete_when_a_depends_on_does():
+    child = Task(name="child").save()
+    parent = Task(name="parent").save()
+    parent.depends_on.connect(child)
+
+    child.complete = True
+    child.save()
+
+    parent.complete = True
+    parent.save()
+
+    child.complete = False
+    child.save()
+
+    parent.refresh()
+    assert parent.complete == False
