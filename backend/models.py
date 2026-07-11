@@ -46,4 +46,7 @@ class Task(StructuredNode):
             for parent in self.is_part_of:
                 parent.complete = False
                 parent.save()
+            for parent in self.blocks:
+                parent.complete = False
+                parent.save()
         return ret
