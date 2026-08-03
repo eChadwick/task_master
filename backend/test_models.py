@@ -64,7 +64,7 @@ def test_parent_updates_to_incomplete_when_a_depends_on_does():
     assert parent.complete == False
 
 
-def test_parent_updates_to_incomplete_when_a_depends_on_does():
+def test_parent_updates_to_incomplete_when_an_is_blocked_by_on_does():
     child = Task(name="child").save()
     parent = Task(name="parent").save()
     parent.is_blocked_by.connect(child)
