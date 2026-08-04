@@ -20,30 +20,38 @@ def test_task_cant_be_complete_when_depends_on_are_incomplete():
     child = Task(name="child").save()
     parent = Task(name="parent").save()
     parent.depends_on.connect(child)
+    parent.complete = True
 
-    with pytest.raises(ValueError, match=TaskErrors.DEPENDENCY_COMPLETE_VIOLATION):
-        parent.complete = True
-        parent.save()
+    parent.save()
+
+    assert parent.complete == False
 
     child.complete = True
     child.save()
+    parent.complete = True
 
     parent.save()
+
+    assert parent.complete == True
 
 
 def test_task_cant_be_complete_when_is_blocked_by_are_incomplete():
     child = Task(name="child").save()
     parent = Task(name="parent").save()
     parent.is_blocked_by.connect(child)
+    parent.complete = True
 
-    with pytest.raises(ValueError, match=TaskErrors.DEPENDENCY_COMPLETE_VIOLATION):
-        parent.complete = True
-        parent.save()
+    parent.save()
+
+    assert parent.complete == False
 
     child.complete = True
     child.save()
+    parent.complete = True
 
     parent.save()
+
+    assert parent.complete == True
 
 
 def test_parent_updates_to_incomplete_when_a_depends_on_does():

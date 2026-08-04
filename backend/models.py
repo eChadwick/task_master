@@ -37,11 +37,11 @@ class Task(StructuredNode):
         if self.complete:
             for child in self.depends_on:
                 if not child.complete:
-                    raise ValueError(TaskErrors.DEPENDENCY_COMPLETE_VIOLATION)
+                    self.complete = False
 
             for child in self.is_blocked_by:
                 if not child.complete:
-                    raise ValueError(TaskErrors.DEPENDENCY_COMPLETE_VIOLATION)
+                    self.complete = False
         else:
             for parent in self.is_part_of:
                 parent.complete = False
