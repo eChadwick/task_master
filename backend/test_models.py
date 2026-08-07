@@ -79,6 +79,7 @@ def test_parent_updates_to_incomplete_when_a_depends_on_does():
 
     parent.complete = True
     parent.save()
+    assert parent.complete == True
 
     child.complete = False
     child.save()
@@ -97,6 +98,7 @@ def test_parent_updates_to_incomplete_when_an_is_blocked_by_on_does():
 
     parent.complete = True
     parent.save()
+    assert parent.complete == True
 
     child.complete = False
     child.save()
