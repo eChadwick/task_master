@@ -1,6 +1,7 @@
 from models import Task
 import pytest
 from error_messages import TaskErrors
+from datetime import datetime
 
 
 @pytest.fixture(autouse=True)
@@ -11,9 +12,23 @@ def clear_database():
 
 
 def test_task_can_be_updated():
-    task = Task(name="task").save()
-    task.details = "details"
+    task = Task(
+        name="task", details="none", deadline=datetime.now(), complete=False
+    ).save()
+    updated_deadline = datetime.now()
+    updated_name = "new_name"
+    updated_details = "new details" ""
+    task.name = updated_name
+    task.details = updated_details
+    task.deadline = updated_deadline
+    task.complete = True
+
     task.save()
+
+    assert task.name == updated_name
+    assert task.details == updated_details
+    assert task.deadline == updated_deadline
+    assert task.complete == True
 
 
 def test_task_cant_be_complete_when_depends_on_are_incomplete():
