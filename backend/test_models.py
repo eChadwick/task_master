@@ -105,3 +105,12 @@ def test_parent_updates_to_incomplete_when_an_is_blocked_by_on_does():
 
     parent.refresh()
     assert parent.complete == False
+
+
+# def test_parent_goes_incomplete_when_new_depends_on_added():
+
+# def test_parent_goes_incomplete_when_new_is_blocked_by_added():
+
+# def test_parent_goes_incomplete_when_new_is_part_of_added():
+
+# def test_parent_goes_incomplete_when_new_blocks_added()
