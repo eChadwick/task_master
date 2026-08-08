@@ -107,9 +107,27 @@ def test_parent_updates_to_incomplete_when_an_is_blocked_by_on_does():
     assert parent.complete == False
 
 
-# def test_parent_goes_incomplete_when_new_depends_on_added():
+def test_parent_goes_incomplete_when_new_depends_on_added():
+    parent = Task(name="parent", complete=True).save()
+    assert parent.complete == True
+    child = Task(name="child").save()
+    parent.depends_on.connect(child)
 
-# def test_parent_goes_incomplete_when_new_is_blocked_by_added():
+    parent.save()
+
+    assert parent.complete == False
+
+
+def test_parent_goes_incomplete_when_new_is_blocked_by_added():
+    parent = Task(name="parent", complete=True).save()
+    assert parent.complete == True
+    child = Task(name="child").save()
+    parent.is_blocked_by.connect(child)
+
+    parent.save()
+
+    assert parent.complete == False
+
 
 # def test_parent_goes_incomplete_when_new_is_part_of_added():
 
