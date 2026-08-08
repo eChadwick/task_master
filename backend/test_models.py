@@ -129,6 +129,23 @@ def test_parent_goes_incomplete_when_new_is_blocked_by_added():
     assert parent.complete == False
 
 
-# def test_parent_goes_incomplete_when_new_is_part_of_added():
+def test_parent_goes_incomplete_when_new_is_part_of_added():
+    parent = Task(name="parent", complete=True).save()
+    assert parent.complete == True
+    child = Task(name="child").save()
+    child.is_part_of.connect(parent)
+    child.save()
 
-# def test_parent_goes_incomplete_when_new_blocks_added()
+    parent.refresh()
+    assert parent.complete == False
+
+
+def test_parent_goes_incomplete_when_new_blocks_added():
+    parent = Task(name="parent", complete=True).save()
+    assert parent.complete == True
+    child = Task(name="child").save()
+    child.blocks.connect(parent)
+    child.save()
+
+    parent.refresh()
+    assert parent.complete == False

@@ -42,6 +42,7 @@ class Task(StructuredNode):
             for child in self.is_blocked_by:
                 if not child.complete:
                     self.complete = False
+
         else:
             for parent in self.is_part_of:
                 parent.complete = False
