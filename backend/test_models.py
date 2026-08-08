@@ -149,3 +149,37 @@ def test_parent_goes_incomplete_when_new_blocks_added():
 
     parent.refresh()
     assert parent.complete == False
+
+
+def test_task_is_completable_method_with_depends_on_relationship():
+    parent = Task(name="parent", complete=False).save()
+
+    assert parent.is_completable() == True
+
+    child = Task(name="child", complete=False).save()
+    parent.depends_on.connect(child)
+
+    assert parent.is_completable() == False
+
+    child.complete = True
+    child.save()
+    parent.refresh()
+
+    assert parent.is_completable() == True
+
+
+def test_task_is_completable_method_with_is_blocked_by_relationship():
+    parent = Task(name="parent", complete=False).save()
+
+    assert parent.is_completable() == True
+
+    child = Task(name="child", complete=False).save()
+    parent.is_blocked_by.connect(child)
+
+    assert parent.is_completable() == False
+
+    child.complete = True
+    child.save()
+    parent.refresh()
+
+    assert parent.is_completable() == True

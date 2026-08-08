@@ -51,3 +51,14 @@ class Task(StructuredNode):
                 parent.complete = False
                 parent.save()
         return ret
+
+    def is_completable(self):
+        for child in self.depends_on:
+            if not child.complete:
+                return False
+
+        for child in self.is_blocked_by:
+            if not child.complete:
+                return False
+
+        return True
