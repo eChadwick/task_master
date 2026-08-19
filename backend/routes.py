@@ -66,7 +66,7 @@ def get_single_task(task_name: str):
     task = Task.nodes.get_or_none(name=task_name)
 
     if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
+        raise HTTPException(status_code=404, detail=TaskErrors.TASK_NOT_FOUND_ERROR)
 
     return {
         "name": task.name,
@@ -128,4 +128,4 @@ def update_task(task_name: str):
     task = Task.nodes.get_or_none(name=task_name)
 
     if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
+        raise HTTPException(status_code=404, detail=TaskErrors.TASK_NOT_FOUND_ERROR)

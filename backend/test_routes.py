@@ -145,7 +145,7 @@ class TestTaskGet(TestFixture):
 
     def test_get_single_task_not_found(self):
         not_real_task_name = "Non Existent Task"
-        expected_error_detail = "Task not found"
+        expected_error_detail = TaskErrors.TASK_NOT_FOUND_ERROR
 
         response = client.get(
             app.url_path_for("get_single_task", task_name=not_real_task_name)
