@@ -208,3 +208,13 @@ class TestTaskGet(TestFixture):
         data = response.json()
         assert data["nodes"] == []
         assert data["edges"] == []
+
+
+class TestTaskUpdate(TestFixture):
+    def test_404_when_called_with_invalid_id(self):
+        response = client.post(
+            app.url_path_for("update_task", task_name="non-existent task")
+        )
+
+        assert response.status_code == 404
+        assert response.json()["detail"] == TaskErrors.TASK_NOT_FOUND_ERROR

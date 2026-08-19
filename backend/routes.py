@@ -121,3 +121,11 @@ def get_tasks():
             )
 
     return {"nodes": nodes, "edges": edges}
+
+
+@router.post("tasks/{task_name}")
+def update_task(task_name: str):
+    task = Task.nodes.get_or_none(name=task_name)
+
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
