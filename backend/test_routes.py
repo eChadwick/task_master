@@ -214,7 +214,7 @@ class TestTaskUpdate(TestFixture):
     def test_404_when_called_with_invalid_id(self):
         response = client.post(
             app.url_path_for("update_task", task_name="non-existent task"),
-            json={"name": ""},
+            json={},
         )
 
         assert response.status_code == 404
