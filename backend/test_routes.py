@@ -234,3 +234,17 @@ class TestTaskUpdate(TestFixture):
 
         task.refresh()
         assert task.name == new_name
+
+    def test_all_fields_optional(self):
+        initial_task_name = "task"
+        task = Task(name=initial_task_name).save()
+
+        response = client.post(
+            app.url_path_for("update_task", task_name=task.name), json={}
+        )
+
+        assert response.status_code == 200
+        assert response.json()["name"] == initial_task_name
+
+        task.refresh()
+        assert task.name == initial_task_name

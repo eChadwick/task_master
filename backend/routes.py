@@ -134,7 +134,7 @@ def update_task(task_name: str, payload: TaskUpdateRequest):
     if not task:
         raise HTTPException(status_code=404, detail=TaskErrors.TASK_NOT_FOUND_ERROR)
 
-    task.name = payload.name
+    task.name = payload.name if payload.name else task.name
     task.save()
     task.refresh()
 
