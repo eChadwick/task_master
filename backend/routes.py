@@ -125,6 +125,7 @@ def get_tasks():
 
 class TaskUpdateRequest(BaseModel):
     name: Optional[str] = None
+    details: Optional[str] = None
 
 
 @router.post("tasks/{task_name}")
@@ -135,7 +136,9 @@ def update_task(task_name: str, payload: TaskUpdateRequest):
         raise HTTPException(status_code=404, detail=TaskErrors.TASK_NOT_FOUND_ERROR)
 
     task.name = payload.name if payload.name else task.name
+    task.details = payload.details if payload.details else task.details
+
     task.save()
     task.refresh()
 
-    return {"name": task.name}
+    return {"name": task.name, "details": task.details}

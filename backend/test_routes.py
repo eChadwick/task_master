@@ -221,23 +221,28 @@ class TestTaskUpdate(TestFixture):
         assert response.json()["detail"] == TaskErrors.TASK_NOT_FOUND_ERROR
 
     def test_happy_path_update(self):
-        task = Task(name="task").save()
+        task = Task(name="task", details="details").save()
 
         new_name = "new name"
+        new_details = "new_details"
+
         response = client.post(
             app.url_path_for("update_task", task_name=task.name),
-            json={"name": new_name},
+            json={"name": new_name, "details": new_details},
         )
 
         assert response.status_code == 200
         assert response.json()["name"] == new_name
+        assert response.json()["details"] == new_details
 
         task.refresh()
         assert task.name == new_name
+        assert task.details == new_details
 
     def test_all_fields_optional(self):
         initial_task_name = "task"
-        task = Task(name=initial_task_name).save()
+        initial_task_details = "details"
+        task = Task(name=initial_task_name, details=initial_task_details).save()
 
         response = client.post(
             app.url_path_for("update_task", task_name=task.name), json={}
@@ -245,6 +250,8 @@ class TestTaskUpdate(TestFixture):
 
         assert response.status_code == 200
         assert response.json()["name"] == initial_task_name
+        assert response.json()["details"] == initial_task_details
 
         task.refresh()
         assert task.name == initial_task_name
+        assert task.details == initial_task_details
