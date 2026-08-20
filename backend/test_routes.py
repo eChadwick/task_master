@@ -213,8 +213,24 @@ class TestTaskGet(TestFixture):
 class TestTaskUpdate(TestFixture):
     def test_404_when_called_with_invalid_id(self):
         response = client.post(
-            app.url_path_for("update_task", task_name="non-existent task")
+            app.url_path_for("update_task", task_name="non-existent task"),
+            json={"name": ""},
         )
 
         assert response.status_code == 404
         assert response.json()["detail"] == TaskErrors.TASK_NOT_FOUND_ERROR
+
+    def test_happy_path_update(self):
+        task = Task(name="task").save()
+
+        new_name = "new name"
+        response = client.post(
+            app.url_path_for("update_task", task_name=task.name),
+            json={"name": new_name},
+        )
+
+        assert response.status_code == 200
+        assert response.json()["name"] == new_name
+
+        task.refresh()
+        assert task.name == new_name

@@ -123,9 +123,19 @@ def get_tasks():
     return {"nodes": nodes, "edges": edges}
 
 
+class TaskUpdateRequest(BaseModel):
+    name: Optional[str] = None
+
+
 @router.post("tasks/{task_name}")
-def update_task(task_name: str):
+def update_task(task_name: str, payload: TaskUpdateRequest):
     task = Task.nodes.get_or_none(name=task_name)
 
     if not task:
         raise HTTPException(status_code=404, detail=TaskErrors.TASK_NOT_FOUND_ERROR)
+
+    task.name = payload.name
+    task.save()
+    task.refresh()
+
+    return {"name": task.name}
