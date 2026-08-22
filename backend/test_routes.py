@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from error_messages import TaskErrors
 from fastapi.testclient import TestClient
 from fastapi import HTTPException
@@ -7,6 +7,7 @@ from models import Task
 import pytest
 from routes import EdgeType
 from unittest.mock import patch
+from neomodel import DateProperty
 
 client = TestClient(app)
 
@@ -35,6 +36,12 @@ class TestTaskCreate(TestFixture):
         assert response.json()["deadline"] == payload["deadline"]
         assert response.json()["complete"] == False
         assert "id" in response.json()
+
+        task = Task.nodes.get_or_none(name=payload["name"])
+        assert task
+        assert task.details == payload["details"]
+        assert task.deadline == date.fromisoformat(payload["deadline"])
+        assert task.complete == False
 
     def test_create_duplicate_task_is_400(self):
         payload = {"name": "Duplicate Task Target"}
