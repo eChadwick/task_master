@@ -232,19 +232,26 @@ class TestTaskUpdate(TestFixture):
 
         new_name = "new name"
         new_details = "new_details"
+        new_deadline = date.today()
 
         response = client.post(
             app.url_path_for("update_task", task_name=task.name),
-            json={"name": new_name, "details": new_details},
+            json={
+                "name": new_name,
+                "details": new_details,
+                "deadline": new_deadline.isoformat(),
+            },
         )
 
         assert response.status_code == 200
         assert response.json()["name"] == new_name
         assert response.json()["details"] == new_details
+        assert response.json()["deadline"] == new_deadline.isoformat()
 
         task.refresh()
         assert task.name == new_name
         assert task.details == new_details
+        assert task.deadline == new_deadline
 
     def test_all_fields_optional(self):
         initial_task_name = "task"
