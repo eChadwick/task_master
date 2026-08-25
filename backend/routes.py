@@ -142,7 +142,7 @@ def update_task(task_name: str, payload: TaskUpdateRequest):
     task.deadline = (
         date.fromisoformat(payload.deadline) if payload.deadline else task.deadline
     )
-    task.complete = payload.complete
+    task.complete = payload.complete if payload.complete != None else task.complete
 
     task.save()
     task.refresh()

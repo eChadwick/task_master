@@ -262,10 +262,12 @@ class TestTaskUpdate(TestFixture):
         initial_task_name = "task"
         initial_task_details = "details"
         initial_deadline = date.today()
+        initial_completeness_status = True
         task = Task(
             name=initial_task_name,
             details=initial_task_details,
             deadline=initial_deadline,
+            complete=initial_completeness_status,
         ).save()
 
         response = client.post(
@@ -276,8 +278,10 @@ class TestTaskUpdate(TestFixture):
         assert response.json()["name"] == initial_task_name
         assert response.json()["details"] == initial_task_details
         assert response.json()["deadline"] == initial_deadline.isoformat()
+        assert response.json()["complete"] == initial_completeness_status
 
         task.refresh()
         assert task.name == initial_task_name
         assert task.details == initial_task_details
         assert task.deadline == initial_deadline
+        assert task.complete == initial_completeness_status
