@@ -127,6 +127,7 @@ class TaskUpdateRequest(BaseModel):
     name: Optional[str] = None
     details: Optional[str] = None
     deadline: Optional[str] = None
+    complete: Optional[bool] = None
 
 
 @router.post("tasks/{task_name}")
@@ -141,8 +142,14 @@ def update_task(task_name: str, payload: TaskUpdateRequest):
     task.deadline = (
         date.fromisoformat(payload.deadline) if payload.deadline else task.deadline
     )
+    task.complete = payload.complete
 
     task.save()
     task.refresh()
 
-    return {"name": task.name, "details": task.details, "deadline": task.deadline}
+    return {
+        "name": task.name,
+        "details": task.details,
+        "deadline": task.deadline,
+        "complete": task.complete,
+    }
