@@ -285,3 +285,22 @@ class TestTaskUpdate(TestFixture):
         assert task.details == initial_task_details
         assert task.deadline == initial_deadline
         assert task.complete == initial_completeness_status
+
+    def test_child_updates(self):
+        parent = Task(name="parent").save()
+        child1 = Task(name="child 1").save()
+        child2 = Task(name="child 2").save()
+        parent.depends_on.connect(child1)
+        parent.is_blocked_by.connect(child2)
+
+        response = client.post(
+            app.url_path_for("update_task", task_name=parent.name),
+            json={"depends_on": [child2.name], "is_blocked_by": [child1.name]},
+        )
+
+        assert child1.name in response.json()["is_blocked_by"]
+        assert child2.name in response.json()["depends_on"]
+
+        parent.refresh()
+        assert child1 in parent.is_blocked_by.all()
+        assert child2 in parent.depends_on.all()

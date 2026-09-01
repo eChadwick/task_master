@@ -128,6 +128,8 @@ class TaskUpdateRequest(BaseModel):
     details: Optional[str] = None
     deadline: Optional[str] = None
     complete: Optional[bool] = None
+    is_blocked_by: Optional[list[str]] = None
+    depends_on: Optional[list[str]] = None
 
 
 @router.post("tasks/{task_name}")
@@ -144,6 +146,23 @@ def update_task(task_name: str, payload: TaskUpdateRequest):
     )
     task.complete = payload.complete if payload.complete != None else task.complete
 
+    task.depends_on.disconnect_all()
+    task.is_blocked_by.disconnect_all()
+
+    if payload.depends_on is not None:
+        task.depends_on.disconnect_all()
+        for child_name in payload.depends_on:
+            child_node = Task.nodes.get_or_none(name=child_name)
+            if child_node:
+                task.depends_on.connect(child_node)
+
+    if payload.is_blocked_by is not None:
+        task.is_blocked_by.disconnect_all()
+        for blocker_name in payload.is_blocked_by:
+            blocker_node = Task.nodes.get_or_none(name=blocker_name)
+            if blocker_node:
+                task.is_blocked_by.connect(blocker_node)
+
     task.save()
     task.refresh()
 
@@ -152,4 +171,6 @@ def update_task(task_name: str, payload: TaskUpdateRequest):
         "details": task.details,
         "deadline": task.deadline,
         "complete": task.complete,
+        "is_blocked_by": [child.name for child in task.is_blocked_by.all()],
+        "depends_on": [child.name for child in task.depends_on.all()],
     }
