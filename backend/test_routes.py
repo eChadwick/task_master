@@ -270,6 +270,12 @@ class TestTaskUpdate(TestFixture):
             complete=initial_completeness_status,
         ).save()
 
+        child1 = Task(name="child1").save()
+        child2 = Task(name="child2").save()
+
+        task.depends_on.connect(child1)
+        task.is_blocked_by.connect(child2)
+
         response = client.post(
             app.url_path_for("update_task", task_name=task.name), json={}
         )
