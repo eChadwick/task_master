@@ -310,3 +310,23 @@ class TestTaskUpdate(TestFixture):
         parent.refresh()
         assert child1 in parent.is_blocked_by.all()
         assert child2 in parent.depends_on.all()
+
+    def test_child_deletion(self):
+        parent = Task(name="parent").save()
+        child1 = Task(name="child1").save()
+        child2 = Task(name="child2").save()
+
+        parent.is_blocked_by.connect(child1)
+        parent.depends_on.connect(child2)
+
+        response = client.post(
+            app.url_path_for("update_task", task_name=parent.name),
+            json={"depends_on": [], "is_blocked_by": []},
+        )
+
+        assert response.json()["depends_on"] == []
+        assert response.json()["is_blocked_by"] == []
+
+        parent.refresh()
+        assert len(parent.depends_on) == 0
+        assert len(parent.is_blocked_by) == 0
