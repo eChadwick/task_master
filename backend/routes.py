@@ -73,6 +73,7 @@ def get_single_task(task_name: str):
         "details": task.details,
         "deadline": task.deadline,
         "complete": task.complete,
+        "completable": task.is_completable(),
         "is_part_of": [task.name for task in task.is_part_of.all()],
         "depends_on": [task.name for task in task.depends_on.all()],
         "blocks": [task.name for task in task.blocks.all()],

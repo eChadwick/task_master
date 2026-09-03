@@ -147,6 +147,7 @@ class TestTaskGet(TestFixture):
         assert data["details"] == target_details
         assert data["deadline"] == target_deadline.strftime("%Y-%m-%d")
         assert data["complete"] == False
+        assert data["completable"] == False
         assert parent_name in data["is_part_of"]
         assert child_name in data["depends_on"]
 
