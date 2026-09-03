@@ -29,7 +29,7 @@ export function ViewTaskPage() {
       <h1>{task.name}</h1>
       <p>
         <strong>Status:</strong> {task.complete ? "Complete" : "Incomplete"}
-        <button>{task.complete ? "Mark Incomplete" : "Mark Complete"}</button>
+        <button disabled={!task.completable}>{task.completable ? "Mark Incomplete" : "Mark Complete"}</button>
       </p>
       <p><strong>Details:</strong> {task.details || 'No details provided'}</p>
       <p><strong>Deadline:</strong> {task.deadline || 'No deadline set'}</p>
