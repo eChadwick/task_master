@@ -27,6 +27,7 @@ export function ViewTaskPage() {
   return (
     <div className="task-view-container">
       <h1>{task.name}</h1>
+      <p><strong>Status:</strong> {task.complete ? "Complete" : "Incomplete"}</p>
       <p><strong>Details:</strong> {task.details || 'No details provided'}</p>
       <p><strong>Deadline:</strong> {task.deadline || 'No deadline set'}</p>
 

@@ -19,6 +19,7 @@ export interface TaskData {
   name: string;
   details: string | null;
   deadline: string | null;
+  complete: boolean;
   is_part_of: string[];
   depends_on: string[];
   blocks: string[];
