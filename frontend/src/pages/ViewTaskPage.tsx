@@ -7,6 +7,7 @@ export function ViewTaskPage() {
   const { task_name } = useParams<{ task_name: string }>();
   const [task, setTask] = useState<TaskData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
   useEffect(() => {
     if (!task_name) return;
@@ -21,6 +22,26 @@ export function ViewTaskPage() {
       });
   }, [task_name]);
 
+  const handleToggleComplete = async () => {
+    if (!task) return;
+
+    setIsUpdating(true);
+    try {
+      // 1. Send the state update
+      await taskApi.update(task.name, {
+        complete: !task.complete,
+      });
+      // 2. Fetch fresh, fully-computed graph data
+      const refreshedTask = await taskApi.getByName(task.name);
+      setTask(refreshedTask);
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.detail || 'Failed to update task status';
+      alert(`Error: ${errorMsg}`);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   if (error) return <div className="task-view-error">Error: {error}</div>;
   if (!task) return <div className="task-view-loading">Loading task data...</div>;
 
@@ -28,8 +49,13 @@ export function ViewTaskPage() {
     <div className="task-view-container">
       <h1>{task.name}</h1>
       <p>
-        <strong>Status:</strong> {task.complete ? "Complete" : "Incomplete"}
-        <button disabled={!task.completable}>{task.completable ? "Mark Incomplete" : "Mark Complete"}</button>
+        <strong>Status:</strong> {task.complete ? "Complete" : "Incomplete"}{' '}
+        <button
+          onClick={handleToggleComplete}
+          disabled={isUpdating || (!task.complete && !task.completable)}
+        >
+          {isUpdating ? "Updating..." : task.complete ? "Mark Incomplete" : "Mark Complete"}
+        </button>
       </p>
       <p><strong>Details:</strong> {task.details || 'No details provided'}</p>
       <p><strong>Deadline:</strong> {task.deadline || 'No deadline set'}</p>

@@ -27,6 +27,8 @@ export interface TaskData {
   is_blocked_by: string[];
 }
 
+export type UpdateTaskPayload = Partial<TaskData>;
+
 export const taskApi = {
   getAll: async (): Promise<Task[]> => {
     const response = await axios.get<Task[]>(`${API_BASE_URL}/tasks`);
@@ -40,6 +42,11 @@ export const taskApi = {
 
   getByName: async (name: string): Promise<TaskData> => {
     const response = await axios.get<TaskData>(`${API_BASE_URL}/tasks/${encodeURIComponent(name)}`);
+    return response.data;
+  },
+
+  update: async (name: string, payload: UpdateTaskPayload): Promise<TaskData> => {
+    const response = await axios.post<TaskData>(`${API_BASE_URL}/tasks/${encodeURIComponent(name)}`, payload);
     return response.data;
   }
 };

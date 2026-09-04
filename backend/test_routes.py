@@ -219,6 +219,7 @@ class TestTaskGet(TestFixture):
 
 
 class TestTaskUpdate(TestFixture):
+
     def test_404_when_called_with_invalid_id(self):
         response = client.post(
             app.url_path_for("update_task", task_name="non-existent task"),
@@ -252,6 +253,11 @@ class TestTaskUpdate(TestFixture):
         assert response.json()["details"] == new_details
         assert response.json()["deadline"] == new_deadline.isoformat()
         assert response.json()["complete"] == True
+
+        expected_keys = ["blocks", "is_blocked_by", "is_part_of", "depends_on"]
+
+        for key in expected_keys:
+            assert key in response.json()
 
         task.refresh()
         assert task.name == new_name

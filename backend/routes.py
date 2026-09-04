@@ -133,7 +133,7 @@ class TaskUpdateRequest(BaseModel):
     depends_on: Optional[list[str]] = None
 
 
-@router.post("tasks/{task_name}")
+@router.post("/tasks/{task_name}")
 def update_task(task_name: str, payload: TaskUpdateRequest):
     task = Task.nodes.get_or_none(name=task_name)
 
@@ -174,4 +174,6 @@ def update_task(task_name: str, payload: TaskUpdateRequest):
         "complete": task.complete,
         "is_blocked_by": [child.name for child in task.is_blocked_by.all()],
         "depends_on": [child.name for child in task.depends_on.all()],
+        "blocks": [parent.name for parent in task.blocks.all()],
+        "is_part_of": [parent.name for parent in task.is_part_of.all()],
     }
