@@ -337,3 +337,42 @@ class TestTaskUpdate(TestFixture):
         parent.refresh()
         assert len(parent.depends_on) == 0
         assert len(parent.is_blocked_by) == 0
+
+    def test_parent_updates(self):
+        child = Task(name="child").save()
+        parent1 = Task(name="parent 1").save()
+        parent2 = Task(name="parent 2").save()
+        child.is_part_of.connect(parent1)
+        child.blocks.connect(parent2)
+
+        response = client.post(
+            app.url_path_for("update_task", task_name=child.name),
+            json={"is_part_of": [parent2.name], "blocks": [parent1.name]},
+        )
+
+        assert parent1.name in response.json()["blocks"]
+        assert parent2.name in response.json()["is_part_of"]
+
+        child.refresh()
+        assert parent1 in child.blocks.all()
+        assert parent2 in child.is_part_of.all()
+
+    def test_parent_deletion(self):
+        child = Task(name="child").save()
+        parent1 = Task(name="parent1").save()
+        parent2 = Task(name="parent2").save()
+
+        child.blocks.connect(parent1)
+        child.is_part_of.connect(parent2)
+
+        response = client.post(
+            app.url_path_for("update_task", task_name=child.name),
+            json={"is_part_of": [], "blocks": []},
+        )
+
+        assert response.json()["is_part_of"] == []
+        assert response.json()["blocks"] == []
+
+        child.refresh()
+        assert len(child.is_part_of) == 0
+        assert len(child.blocks) == 0

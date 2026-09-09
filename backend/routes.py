@@ -131,13 +131,12 @@ class TaskUpdateRequest(BaseModel):
     complete: Optional[bool] = None
     is_blocked_by: Optional[list[str]] = None
     depends_on: Optional[list[str]] = None
+    is_part_of: Optional[list[str]] = None
+    blocks: Optional[list[str]] = None
 
 
 @router.post("/tasks/{task_name}")
 def update_task(task_name: str, payload: TaskUpdateRequest):
-    import ipdb
-
-    ipdb.set_trace()
     task = Task.nodes.get_or_none(name=task_name)
 
     if not task:
@@ -166,6 +165,20 @@ def update_task(task_name: str, payload: TaskUpdateRequest):
             blocker_node = Task.nodes.get_or_none(name=blocker_name)
             if blocker_node:
                 task.is_blocked_by.connect(blocker_node)
+
+    if payload.is_part_of is not None:
+        task.is_part_of.disconnect_all()
+        for parent_name in payload.is_part_of:
+            parent_node = Task.nodes.get_or_none(name=parent_name)
+            if parent_node:
+                task.is_part_of.connect(parent_node)
+
+    if payload.blocks is not None:
+        task.blocks.disconnect_all()
+        for parent_name in payload.blocks:
+            parent_node = Task.nodes.get_or_none(name=parent_name)
+            if parent_node:
+                task.blocks.connect(parent_node)
 
     task.save()
     task.refresh()
