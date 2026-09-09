@@ -135,6 +135,9 @@ class TaskUpdateRequest(BaseModel):
 
 @router.post("/tasks/{task_name}")
 def update_task(task_name: str, payload: TaskUpdateRequest):
+    import ipdb
+
+    ipdb.set_trace()
     task = Task.nodes.get_or_none(name=task_name)
 
     if not task:
