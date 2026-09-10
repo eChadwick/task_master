@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { CreateTaskPage } from './pages/CreateTaskPage';
 import { ViewTaskPage } from './pages/ViewTaskPage';
 import { ViewAllTasksPage } from './pages/ViewAllTasksPage';
-import { EditTaskPage } from './pages/EditTaskPage';
 import './App.css';
 import { TaskFormPage } from './pages/TaskFormPage';
 
