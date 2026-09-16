@@ -61,6 +61,13 @@ def create_task(payload: TaskCreateRequest):
     }
 
 
+@router.get("/tasks/list", status_code=200)
+def get_task_list():
+    all_tasks = Task.nodes.all()
+
+    return {"tasks": [task.name for task in all_tasks]}
+
+
 @router.get("/tasks/{task_name}")
 def get_single_task(task_name: str):
     task = Task.nodes.get_or_none(name=task_name)

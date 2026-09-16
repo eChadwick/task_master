@@ -376,3 +376,17 @@ class TestTaskUpdate(TestFixture):
         child.refresh()
         assert len(child.is_part_of) == 0
         assert len(child.blocks) == 0
+
+
+class TestTaskList(TestFixture):
+    def test_get_all_tasks(self):
+        for i in range(1, 6):
+            Task(name=f"task_{i}").save()
+
+        response = client.get(app.url_path_for("get_task_list"))
+
+        assert response.status_code == 200
+        assert len(response.json()["tasks"]) == 5
+
+        for i in range(1, 6):
+            assert f"task_{i}" in response.json()["tasks"]
